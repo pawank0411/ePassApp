@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">ePassApp</string>
+    <string name="wait_for_the_naccount_to_be_verified">WAIT FOR THE \nACCOUNT TO BE VERIFIED</string>
+    <string name="generate_pass">GENERATE PASS</string>
+    <string name="phone_number">Phone number</string>
+    <string name="generate">GENERATE</string>
+    <string name="verify_your_number">Verify Your Number</string>
+    <string name="verify">Verify</string>
+    <string name="verify_otp">VERIFY OTP</string>
+    <string name="otp">OTP</string>
+    <string name="don_t_recived_the_code">Don\'t Recived The code ?</string>
+    <string name="profile">PROFILE</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="post">POST</string>
+    <string name="register">register</string>
+    <string name="enter_truck_no">Enter Truck No</string>
+    <string name="pit_owner">Pit Owner</string>
+    <string name="section_number">Section Number</string>
+    <string name="bench_number">Bench Number</string>
+    <string name="date">Date</string>
+    <string name="mine_number">Mine Number</string>
+    <string name="serial_number">Serial Number</string>
+    <string name="truck_number">Truck Number</string>
+    <string name="serial_no">Serial No. :</string>
+    <string name="pass_issued_date">Pass Issued Date : </string>
+    <string name="mines_no">Mines No. :</string>
+    <string name="pit_owner1">Pit Owner :</string>
+    <string name="section_no">Section No. :</string>
+    <string name="bench_no">Bench No. :</string>
+    <string name="truck_no">Truck No. :</string>
+    <string name="edit">EDIT</string>
+    <string name="reject">REJECT</string>
+    <string name="accept">Accept</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="clear">Clear</string>
+    <string name="save">Save</string>
+    <string name="sign_here">SIGN HERE</string>
+    <string name="cancel">Cancel</string>
+    <string name="mr_x">Mr.x</string>
+    <string name="mine">Mine</string>
+    <string name="contractor_name">Contractor Name :</string>
+    <string name="contractor">Contractor</string>
+    <string name="active_passes">Active Passes</string>
+    <string name="generate_pass1">Generate Pass</string>
+    <string name="history">History</string>
+    <string name="logout">Logout</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string-array name="post">
+        <item>Select an option</item>
+        <item>Contractor</item>
+        <item>Truck driver</item>
+        <item>Way Bridge</item>
+        <item>Site Incharge</item>
+        <item>Pit Owner</item>
+    </string-array>
+    <string-array name="mine">
+        <item>Select an option</item>
+        <item>Mine Number 1</item>
+        <item>Mine Number 2</item>
+    </string-array>
+    <string-array name="contractors">
+        <item>Select an option</item>
+        <item>ContractorA</item>
+        <item>ContractorB</item>
+        <item>ContractorC</item>
+    </string-array>
+</resources>
