@@ -47,6 +47,7 @@
     <string name="logout">Logout</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="search">Search</string>
     <string-array name="post">
         <item>Select an option</item>
         <item>Contractor</item>
@@ -62,8 +63,8 @@
     </string-array>
     <string-array name="contractors">
         <item>Select an option</item>
-        <item>ContractorA</item>
-        <item>ContractorB</item>
-        <item>ContractorC</item>
+        <item>Charbhuja</item>
+        <item>Mateshwari</item>
+        <item>Vinayak</item>
     </string-array>
 </resources>

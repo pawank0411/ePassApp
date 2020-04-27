@@ -46,274 +46,284 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/form_layout"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/heading"
-                android:layout_width="wrap_content"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/form_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_margin="10dp"
-                android:text="@string/generate_pass"
-                android:textColor="#FF0023"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-            <LinearLayout
-                android:id="@+id/contractor_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/black_border"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/heading">
-
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/heading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:text="@string/contractor"
-                    android:textAllCaps="true"
-                    android:textColor="#0e0e0e" />
+                    android:text="@string/generate_pass"
+                    android:textColor="#FF0023"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <Spinner
-                    android:id="@+id/spinner_2"
+                <LinearLayout
+                    android:id="@+id/contractor_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:entries="@array/contractors" />
-            </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/serial_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/serial_number"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/contractor_layout">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/serial_no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:focusable="false"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <!--        <com.google.android.material.textfield.TextInputLayout-->
-            <!--            android:id="@+id/mine_layout"-->
-            <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_margin="10dp"-->
-            <!--            android:hint="@string/mine_number"-->
-            <!--            android:textColorHint="#000000"-->
-            <!--            app:boxStrokeColor="#000000"-->
-            <!--            app:hintEnabled="true"-->
-            <!--            app:hintTextColor="#000000"-->
-            <!--            app:layout_constraintTop_toBottomOf="@+id/serial_layout">-->
-
-            <!--            <com.google.android.material.textfield.TextInputEditText-->
-            <!--                android:id="@+id/mines_no"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:enabled="false"-->
-            <!--                android:focusable="false"-->
-            <!--                android:inputType="text"-->
-            <!--                android:singleLine="true"-->
-            <!--                android:textColor="#000000" />-->
-
-            <!--        </com.google.android.material.textfield.TextInputLayout>-->
-            <LinearLayout
-                android:id="@+id/mine_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/black_border"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/serial_layout">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:text="@string/mine"
-                    android:textAllCaps="true"
-                    android:textColor="#0e0e0e" />
+                    android:background="@drawable/black_border"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@+id/heading">
 
-                <Spinner
-                    android:id="@+id/spinner_1"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:text="@string/contractor"
+                        android:textAllCaps="true"
+                        android:textColor="#0e0e0e" />
+
+                    <Spinner
+                        android:id="@+id/spinner_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:entries="@array/contractors" />
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/serial_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:entries="@array/mine" />
-            </LinearLayout>
+                    android:layout_margin="10dp"
+                    android:hint="@string/serial_number"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/contractor_layout">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/truck_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/truck_number"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/mine_layout">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/serial_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/truck_number"
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!--        <com.google.android.material.textfield.TextInputLayout-->
+                <!--            android:id="@+id/mine_layout"-->
+                <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+                <!--            android:layout_width="match_parent"-->
+                <!--            android:layout_height="wrap_content"-->
+                <!--            android:layout_margin="10dp"-->
+                <!--            android:hint="@string/mine_number"-->
+                <!--            android:textColorHint="#000000"-->
+                <!--            app:boxStrokeColor="#000000"-->
+                <!--            app:hintEnabled="true"-->
+                <!--            app:hintTextColor="#000000"-->
+                <!--            app:layout_constraintTop_toBottomOf="@+id/serial_layout">-->
+
+                <!--            <com.google.android.material.textfield.TextInputEditText-->
+                <!--                android:id="@+id/mines_no"-->
+                <!--                android:layout_width="match_parent"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:enabled="false"-->
+                <!--                android:focusable="false"-->
+                <!--                android:inputType="text"-->
+                <!--                android:singleLine="true"-->
+                <!--                android:textColor="#000000" />-->
+
+                <!--        </com.google.android.material.textfield.TextInputLayout>-->
+                <LinearLayout
+                    android:id="@+id/mine_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
+                    android:layout_margin="10dp"
+                    android:background="@drawable/black_border"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/serial_layout">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:text="@string/mine"
+                        android:textAllCaps="true"
+                        android:textColor="#0e0e0e" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/pit_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/pit_owner"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/truck_layout">
+                    <Spinner
+                        android:id="@+id/spinner_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:entries="@array/mine" />
+                </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/pit_owner"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/truck_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
+                    android:layout_margin="10dp"
+                    android:hint="@string/truck_number"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/mine_layout">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/truck_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/section_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/section_number"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/pit_layout">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/section_no"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/pit_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
+                    android:layout_margin="10dp"
+                    android:hint="@string/pit_owner"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/truck_layout">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/pit_owner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/bench_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/bench_number"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/section_layout">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/bench_no"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/section_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
+                    android:layout_margin="10dp"
+                    android:hint="@string/section_number"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/pit_layout">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/section_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/date_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/date"
-                android:textColorHint="#000000"
-                app:boxStrokeColor="#000000"
-                app:hintEnabled="true"
-                app:hintTextColor="#000000"
-                app:layout_constraintTop_toBottomOf="@+id/bench_layout">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/pass_date"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/bench_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:focusable="false"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000" />
+                    android:layout_margin="10dp"
+                    android:hint="@string/bench_number"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/section_layout">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/bench_no"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/generate_pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:backgroundTint="#283959"
-                android:text="@string/generate"
-                app:layout_constraintTop_toBottomOf="@+id/date_layout" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/pass_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/generate_pass" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/date_layout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="@string/date"
+                    android:textColorHint="#000000"
+                    app:boxStrokeColor="#000000"
+                    app:hintEnabled="true"
+                    app:hintTextColor="#000000"
+                    app:layout_constraintTop_toBottomOf="@+id/bench_layout">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/pass_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="#000000" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/generate_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="#283959"
+                    android:text="@string/generate"
+                    app:layout_constraintTop_toBottomOf="@+id/date_layout" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/pass_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@+id/generate_pass" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
         <ProgressBar
             android:id="@+id/progress"
@@ -324,6 +334,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"

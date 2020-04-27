@@ -7,6 +7,7 @@ import java.util.Locale;
 public class Constants {
     public static final String USER_ACCOUNTS = "users";
     public static final String E_PASSES = "epass";
+    public static final String USER_NAME = "username";
     public static final String POST_CONTRACTOR = "Contractor";
     public static final String POST_SITEINCHARGE = "Site Incharge";
     public static final String POST_WAYBRIDGE = "Way Bridge";
@@ -29,4 +30,6 @@ public class Constants {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
     public static final String date = sdf.format(new Date());
+
+
 }

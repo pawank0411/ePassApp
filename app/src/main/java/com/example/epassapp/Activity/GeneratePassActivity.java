@@ -54,6 +54,26 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
     private FirebaseFirestore firestore;
     private boolean fromSiteInCharge;
 
+    public static String convertToTitleCaseIteratingChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder converted = new StringBuilder();
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+        return converted.toString();
+    }
+
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,7 +149,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                                 epass.setDate(date);
                                 epass.setSerial_no(serial_number);
                                 epass.setMine_no(spinner.getSelectedItem().toString().trim());
-                                epass.setPit_owner(Objects.requireNonNull(pit_owner.getText()).toString().trim());
+                                epass.setPit_owner(convertToTitleCaseIteratingChars(Objects.requireNonNull(pit_owner.getText()).toString().trim()));
                                 epass.setSection_no(Objects.requireNonNull(section_no.getText()).toString().trim());
                                 epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
                                 epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());

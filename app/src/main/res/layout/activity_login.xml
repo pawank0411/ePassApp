@@ -38,6 +38,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/phn"
                 android:layout_width="match_parent"
+                android:inputType="phone"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,6 +94,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/code"
                         android:layout_width="match_parent"
+                        android:inputType="number"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,7 +126,7 @@
                         android:id="@+id/resend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="Send code again"
                         android:textColor="#FFFFFF"
                         android:textSize="15sp"
                         android:textStyle="bold" />

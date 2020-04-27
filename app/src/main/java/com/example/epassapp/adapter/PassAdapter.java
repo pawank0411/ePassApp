@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -55,10 +54,9 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.ViewHolder> {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("signatures/"
                 + passArrayList.get(position).getApprover_name() + ".png");
 
-        storageReference.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(mcontext).load(uri.toString()).into(holder.signature)).addOnFailureListener(new OnFailureListener() {
+        storageReference.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(mcontext.getApplicationContext()).load(uri.toString()).into(holder.signature)).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(mcontext, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
         Log.d("url", String.valueOf(storageReference.getDownloadUrl()));

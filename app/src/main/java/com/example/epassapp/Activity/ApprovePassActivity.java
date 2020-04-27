@@ -2,6 +2,8 @@ package com.example.epassapp.Activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -9,6 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -18,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -58,11 +63,13 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
     private MaterialTextView account_verify;
     private ProgressBar progressBar;
     private ArrayList<Pass> passArrayList = new ArrayList<>();
+    public static boolean isSearchBarOpen = false;
     private String user_name;
     private static final int EXTERNAL_STORAGE_PERMISSION_CODE = 1002;
     private boolean signature_exists;
     private AskSignature askSignature;
     private boolean fromHistory;
+    private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,18 +118,23 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                     user_name = user.getUser_name();
                     firestore.collection(E_PASSES).addSnapshotListener((queryDocumentSnapshots, e) -> {
                         passArrayList.clear();
+                        passOriginalArrayList.clear();
                         if (queryDocumentSnapshots != null) {
                             if (!fromHistory) {
                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
                                     if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date)
                                             && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
-                                            && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
+                                            && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED)) {
                                         passArrayList.add(snapshot.toObject(Pass.class));
+                                        passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                                    }
                                 }
                             } else {
                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED))
+                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)) {
                                         passArrayList.add(snapshot.toObject(Pass.class));
+                                        passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                                    }
                                 }
                             }
                             progressBar.setVisibility(View.GONE);
@@ -293,7 +305,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
             }
             case R.id.active_pass: {
                 Intent intent = new Intent(ApprovePassActivity.this, PassActivity.class);
-                intent.putExtra("fromWayBridge", true);
+                intent.putExtra("fromSiteInCharge", true);
                 startActivity(intent);
                 break;
             }
@@ -310,5 +322,56 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 break;
         }
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_searchbar, menu);
+        MenuItem searchItem = menu.findItem(R.id.search_item);
+
+        SearchManager searchManager = (SearchManager) this.getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = new SearchView(Objects.requireNonNull((this).getSupportActionBar()).getThemedContext());
+        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        searchView.setQueryHint("Search by contractor or truck number...");
+        searchItem.setActionView(searchView);
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(this.getComponentName()));
+        }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                passArrayList.clear();
+                for (Pass pass : passOriginalArrayList) {
+                    if (pass.getTruck_no().contains(newText.trim())
+                            || pass.getContractor_name().toLowerCase().contains(newText.trim())) {
+                        passArrayList.add(pass);
+                    }
+                }
+                passAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                isSearchBarOpen = true;
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                isSearchBarOpen = false;
+                return true;
+            }
+        });
+        return true;
     }
 }

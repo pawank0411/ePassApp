@@ -3,9 +3,12 @@ package com.example.epassapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.epassapp.Activity.ApprovePassActivity;
 import com.example.epassapp.Activity.GeneratePassActivity;
@@ -13,17 +16,20 @@ import com.example.epassapp.Activity.IndividualPassActivity;
 import com.example.epassapp.Activity.LoginActivity;
 import com.example.epassapp.Activity.PassActivity;
 import com.example.epassapp.Model.User;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
 
+import static com.example.epassapp.utilities.Constants.PASS_ACCEPTED;
 import static com.example.epassapp.utilities.Constants.POST_CONTRACTOR;
 import static com.example.epassapp.utilities.Constants.POST_PITOWNER;
 import static com.example.epassapp.utilities.Constants.POST_SITEINCHARGE;
 import static com.example.epassapp.utilities.Constants.POST_TRUCKDRIVER;
 import static com.example.epassapp.utilities.Constants.POST_WAYBRIDGE;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
+import static com.example.epassapp.utilities.Constants.USER_NAME;
 
 public class MainActivity extends AppCompatActivity {
     private String post;
@@ -33,12 +39,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ProgressBar progressBar = findViewById(R.id.progress);
+        MaterialTextView account_verify = findViewById(R.id.account_verify);
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.simpleSwipeRefreshLayout);
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseFirestore.getInstance().collection(USER_ACCOUNTS).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
-                            if (user != null) {
+                            if (user != null && user.getIsVerified().equals(PASS_ACCEPTED)) {
                                 post = user.getUser_post();
                                 if (post != null) {
                                     switch (post) {
@@ -55,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                         case POST_SITEINCHARGE: {
                                             Intent intent = new Intent(MainActivity.this, ApprovePassActivity.class);
+                                            intent.putExtra(USER_NAME, user.getUser_name());
                                             startActivity(intent);
                                             break;
                                         }
@@ -76,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(this, "no post", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(this, "no user", Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                                account_verify.setVisibility(View.VISIBLE);
+                                Toast.makeText(this, "Account not verified!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }).addOnFailureListener(e -> {
@@ -87,5 +100,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         }
+
+        swipeRefreshLayout.setOnRefreshListener(this::recreate);
     }
+
 }

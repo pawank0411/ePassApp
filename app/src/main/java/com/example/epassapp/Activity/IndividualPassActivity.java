@@ -1,10 +1,17 @@
 package com.example.epassapp.Activity;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,17 +41,20 @@ import static com.example.epassapp.utilities.Constants.E_PASSES;
 import static com.example.epassapp.utilities.Constants.PASS_ACCEPTED;
 import static com.example.epassapp.utilities.Constants.PASS_CONTRACTOR;
 import static com.example.epassapp.utilities.Constants.PASS_PITOWNER;
-import static com.example.epassapp.utilities.Constants.PASS_REJECTED;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
+import static com.example.epassapp.utilities.Constants.USER_NAME;
 
 public class IndividualPassActivity extends ApprovePassActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private String user_name;
+    public static boolean isSearchBarOpen = false;
     private ArrayList<Pass> passInfo = new ArrayList<>();
+    private String contractor_name;
     private RecyclerView recyclerView;
     private PassAdapter passAdapter;
     private MaterialTextView account_verify;
     private ProgressBar progressBar;
     private boolean fromPitOwner, fromHistory;
+    private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
+    private SharedPreferences fromPitPref;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,37 +81,46 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
 
         if (bundle != null) {
-            user_name = bundle.getString("CurrentContractorName");
+            contractor_name = bundle.getString("CurrentContractorName");
         }
         if (bundle != null) {
             fromHistory = bundle.getBoolean("fromHistory");
         }
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        CollectionReference contractorpassRef = firebaseFirestore.collection(E_PASSES);
+        fromPitPref = this.getSharedPreferences("fromPitPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = fromPitPref.edit();
+        editor.putBoolean("fromPitPref", fromPitOwner);
+        editor.apply();
 
-        if (!fromPitOwner) {
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        CollectionReference userRef = firebaseFirestore.collection(USER_ACCOUNTS);
+
+        if (!fromPitPref.getBoolean("fromPitPref", false)) {
             if (!fromHistory) {
                 Objects.requireNonNull(getSupportActionBar()).setTitle("Active Passes");
             } else {
                 Objects.requireNonNull(getSupportActionBar()).setTitle("History");
             }
-            contractorpassRef.whereEqualTo(PASS_CONTRACTOR, user_name).addSnapshotListener((queryDocumentSnapshots, e) -> {
+            firebaseFirestore.collection(E_PASSES).whereEqualTo(PASS_CONTRACTOR, contractor_name).addSnapshotListener((queryDocumentSnapshots, e) -> {
                 passInfo.clear();
+                passOriginalArrayList.clear();
                 progressBar.setVisibility(View.GONE);
 
                 if (queryDocumentSnapshots != null) {
                     if (!fromHistory) {
                         for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
                             if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date) &&
-                                    Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
-                                    && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
+                                    Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)) {
                                 passInfo.add(snapshot.toObject(Pass.class));
+                                passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                            }
                         }
                     } else {
                         for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                            if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED))
+                            if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)) {
                                 passInfo.add(snapshot.toObject(Pass.class));
+                                passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                            }
                         }
                     }
                 }
@@ -132,31 +151,33 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
             } else {
                 Objects.requireNonNull(getSupportActionBar()).setTitle("History");
             }
-
-            firebaseFirestore.collection(USER_ACCOUNTS)
-                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            contractorpassRef.whereEqualTo(PASS_PITOWNER,
-                                    Objects.requireNonNull(Objects.requireNonNull(task.getResult()).toObject(User.class))
-                                            .getUser_name())
+            userRef.document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                    .get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
+                    if (user != null) {
+                        if (user.getIsVerified().equals(PASS_ACCEPTED)) {
+                            firebaseFirestore.collection(E_PASSES)
+                                    .whereEqualTo(PASS_PITOWNER, user.getUser_name())
                                     .addSnapshotListener((queryDocumentSnapshots, e) -> {
                                         passInfo.clear();
+                                        passOriginalArrayList.clear();
                                         progressBar.setVisibility(View.GONE);
-
                                         if (queryDocumentSnapshots != null) {
                                             if (!fromHistory) {
                                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
                                                     if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date)
-                                                            && Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
-                                                            && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
+                                                            && Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)) {
                                                         passInfo.add(snapshot.toObject(Pass.class));
+                                                        passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                                                    }
                                                 }
                                             } else {
                                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED))
+                                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)) {
                                                         passInfo.add(snapshot.toObject(Pass.class));
+                                                        passOriginalArrayList.add(snapshot.toObject(Pass.class));
+                                                    }
                                                 }
                                             }
                                         }
@@ -173,34 +194,98 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
                                         recyclerView.setAdapter(passAdapter);
                                         passAdapter.notifyDataSetChanged();
                                     });
+                        } else {
+                            account_verify.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(IndividualPassActivity.this, "Account Not verified!", Toast.LENGTH_SHORT).show();
                         }
-                    }).addOnFailureListener(e -> {
-
-            });
+                    }
+                }
+            }).addOnFailureListener(e -> Toast.makeText(IndividualPassActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show());
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home && !fromPitOwner || fromHistory) {
+        if (id == android.R.id.home) {
             finish();
-        } else {
-            switch (id) {
-                case R.id.logout: {
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(IndividualPassActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    break;
-                }
-                case R.id.history: {
-                    Intent intent = new Intent(IndividualPassActivity.this, IndividualPassActivity.class);
-                    intent.putExtra("fromHistory", true);
-                    startActivity(intent);
-                    break;
-                }
+        }
+        return false;
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.logout: {
+                FirebaseAuth.getInstance().signOut();
+                fromPitPref.edit().clear().apply();
+                Intent intent = new Intent(IndividualPassActivity.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.history: {
+                Intent intent = new Intent(IndividualPassActivity.this, IndividualPassActivity.class);
+                intent.putExtra(USER_NAME, fromPitPref.getString(USER_NAME, null));
+                intent.putExtra("fromPitOwner", true);
+                intent.putExtra("fromHistory", true);
+                startActivity(intent);
+                break;
             }
         }
+        return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_searchbar, menu);
+        MenuItem searchItem = menu.findItem(R.id.search_item);
+
+        SearchManager searchManager = (SearchManager) this.getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = new SearchView(Objects.requireNonNull((this).getSupportActionBar()).getThemedContext());
+        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        searchView.setQueryHint("Search by contractor or truck number...");
+        searchItem.setActionView(searchView);
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(this.getComponentName()));
+        }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                passInfo.clear();
+                for (Pass pass : passOriginalArrayList) {
+                    if (pass.getTruck_no().contains(newText.trim())
+                            || pass.getContractor_name().toLowerCase().contains(newText.trim())) {
+                        passInfo.add(pass);
+                    }
+                }
+                passAdapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                isSearchBarOpen = true;
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                isSearchBarOpen = false;
+                return true;
+            }
+        });
         return true;
     }
 }

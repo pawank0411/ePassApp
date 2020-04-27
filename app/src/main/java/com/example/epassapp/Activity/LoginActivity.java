@@ -146,6 +146,29 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    public static String convertToTitleCaseIteratingChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
+    }
+
     private void profile() {
         l2.setVisibility(View.GONE);
         currentuser = FirebaseAuth.getInstance().getCurrentUser();
@@ -183,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                             User user = new User();
                             user.setIsVerified(PASS_PENDING);
                             user.setUser_id(currentuser.getUid());
-                            user.setUser_name(t1.getText().toString().trim());
+                            user.setUser_name(convertToTitleCaseIteratingChars(t1.getText().toString().trim()));
                             user.setUser_phone(phn);
                             user.setUser_post(selected_post);
                             if (selected_post.equals("Truck driver")) {
@@ -206,5 +229,10 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("error_Login", Objects.requireNonNull(e.getMessage()));
             Toast.makeText(LoginActivity.this, "Something went wrong. Please try again!", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
