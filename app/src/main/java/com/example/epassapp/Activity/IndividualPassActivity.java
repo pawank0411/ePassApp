@@ -66,6 +66,9 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setElevation(4);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setElevation(0);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
 
         if (bundle != null) {
             user_name = bundle.getString("CurrentContractorName");
@@ -75,10 +78,6 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
 
         if (!fromPitOwner) {
             Objects.requireNonNull(getSupportActionBar()).setTitle("Active Passes");
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            Objects.requireNonNull(getSupportActionBar()).setElevation(0);
-            Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-
             contractorpassRef.whereEqualTo(PASS_CONTRACTOR, user_name).addSnapshotListener((queryDocumentSnapshots, e) -> {
                 passInfo.clear();
                 progressBar.setVisibility(View.GONE);
@@ -106,10 +105,6 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
             });
         } else {
             Objects.requireNonNull(getSupportActionBar()).setTitle("Pit Owner");
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            Objects.requireNonNull(getSupportActionBar()).setElevation(0);
-            Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-
             DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
             NavigationView navigationView = findViewById(R.id.navigation_view);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

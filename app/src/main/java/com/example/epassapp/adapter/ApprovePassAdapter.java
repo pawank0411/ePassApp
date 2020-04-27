@@ -5,16 +5,22 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.epassapp.Activity.EditPassActivity;
 import com.example.epassapp.Model.Pass;
 import com.example.epassapp.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -31,12 +37,14 @@ import static com.example.epassapp.utilities.Constants.USER_ID;
 public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.ViewHolder> {
     private ArrayList<Pass> passArrayList;
     private Context mcontext;
+    private boolean fromHistory;
     private OnItemClickListener onItemClickListener;
 
-    public ApprovePassAdapter(Context mcontext, ArrayList<Pass> passArrayList, OnItemClickListener onItemClickListener) {
+    public ApprovePassAdapter(Context mcontext, ArrayList<Pass> passArrayList, boolean fromHistory, OnItemClickListener onItemClickListener) {
         this.mcontext = mcontext;
         this.passArrayList = passArrayList;
         this.onItemClickListener = onItemClickListener;
+        this.fromHistory = fromHistory;
     }
 
     @NonNull
@@ -48,7 +56,16 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ApprovePassAdapter.ViewHolder holder, final int position) {
-        holder.action_layout.setVisibility(View.VISIBLE);
+        if (fromHistory) {
+            holder.signature_layout.setVisibility(View.VISIBLE);
+            holder.approver_name.setText("Approved By : " + passArrayList.get(position).getApprover_name());
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("signatures/"
+                    + passArrayList.get(position).getApprover_name() + ".png");
+
+            storageReference.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(mcontext).load(uri.toString()).into(holder.signature)).addOnFailureListener(e -> Toast.makeText(mcontext, e.getMessage(), Toast.LENGTH_SHORT).show());
+        } else {
+            holder.action_layout.setVisibility(View.VISIBLE);
+        }
         holder.serial_no.setText(passArrayList.get(position).getSerial_no());
         holder.date.setText(passArrayList.get(position).getDate());
         holder.mine_no.setText(passArrayList.get(position).getMine_no());
@@ -97,13 +114,19 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no,pass_contractorname;
+        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no, pass_contractorname;
         LinearLayout action_layout;
+        ConstraintLayout signature_layout;
+        ImageView signature;
+        MaterialTextView approver_name;
         MaterialButton accept, reject, edit;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            signature = itemView.findViewById(R.id.signature);
+            approver_name = itemView.findViewById(R.id.approver_name);
+            signature_layout = itemView.findViewById(R.id.signature_layout);
             action_layout = itemView.findViewById(R.id.action_layout);
             serial_no = itemView.findViewById(R.id.pass_serialno);
             date = itemView.findViewById(R.id.pass_date);

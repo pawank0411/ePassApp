@@ -8,7 +8,7 @@
     <string name="verify">Verify</string>
     <string name="verify_otp">VERIFY OTP</string>
     <string name="otp">OTP</string>
-    <string name="don_t_recived_the_code">Don\'t Recived The code ?</string>
+    <string name="don_t_recived_the_code">Don\'t Received The code ?</string>
     <string name="profile">PROFILE</string>
     <string name="enter_name">Enter Name</string>
     <string name="post">POST</string>
@@ -30,7 +30,7 @@
     <string name="truck_no">Truck No. :</string>
     <string name="edit">EDIT</string>
     <string name="reject">REJECT</string>
-    <string name="accept">Accept</string>
+    <string name="accept">Approve</string>
     <string name="login">LOGIN</string>
     <string name="sign_up">SIGN UP</string>
     <string name="clear">Clear</string>

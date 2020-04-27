@@ -3,13 +3,16 @@ package com.example.epassapp.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.epassapp.Model.Pass;
@@ -53,7 +56,6 @@ public class EditPassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_generatepass);
 
         AskSignature askSignature = new AskSignature(this);
-        ;
         pit_owner = findViewById(R.id.pit_owner);
         section_no = findViewById(R.id.section_no);
         bench_no = findViewById(R.id.bench_no);
@@ -68,6 +70,14 @@ public class EditPassActivity extends AppCompatActivity {
 
         progressBar.setVisibility(View.GONE);
         form_layout.setVisibility(View.VISIBLE);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setElevation(4);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Edit Pass");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setElevation(0);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -89,11 +99,7 @@ public class EditPassActivity extends AppCompatActivity {
                 if (user != null) {
                     user_name = user.getUser_name();
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("signatures/" + user_name + ".png");
-                    storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                        signature_exists = true;
-                    }).addOnFailureListener(e -> {
-                        signature_exists = false;
-                    });
+                    storageReference.getDownloadUrl().addOnSuccessListener(uri -> signature_exists = true).addOnFailureListener(e -> signature_exists = false);
                 }
             }
         }).addOnFailureListener(e -> Toast.makeText(EditPassActivity.this, "Something went wrong.Please Try again", Toast.LENGTH_SHORT).show());
@@ -101,9 +107,9 @@ public class EditPassActivity extends AppCompatActivity {
         heading.setText("EDIT PASS");
         generate_pass.setText("APPROVE PASS");
         generate_pass.setOnClickListener(view -> {
-            if (!pit_owner.getText().toString().isEmpty() && !bench_no.getText().toString().trim().isEmpty() &&
-                    !truck_no.getText().toString().trim().isEmpty()
-                    && !section_no.getText().toString().trim().isEmpty()) {
+            if (!Objects.requireNonNull(pit_owner.getText()).toString().isEmpty() && !Objects.requireNonNull(bench_no.getText()).toString().trim().isEmpty() &&
+                    !Objects.requireNonNull(truck_no.getText()).toString().trim().isEmpty()
+                    && !Objects.requireNonNull(section_no.getText()).toString().trim().isEmpty()) {
 
                 final CollectionReference epassReference = FirebaseFirestore.getInstance().collection(E_PASSES);
                 epassReference.document(pass_id).get().addOnCompleteListener(task -> {
@@ -117,8 +123,8 @@ public class EditPassActivity extends AppCompatActivity {
                         progressDialog.setCancelable(false);
                         progressDialog.show();
                         Pass epass = new Pass();
-                        epass.setDate(pass_date.getText().toString().trim());
-                        epass.setSerial_no(serial_no.getText().toString().trim());
+                        epass.setDate(Objects.requireNonNull(pass_date.getText()).toString().trim());
+                        epass.setSerial_no(Objects.requireNonNull(serial_no.getText()).toString().trim());
                         epass.setMine_no(spinner.getSelectedItem().toString().trim());
                         epass.setPit_owner(pit_owner.getText().toString().trim());
                         epass.setSection_no(section_no.getText().toString().trim());
@@ -135,5 +141,14 @@ public class EditPassActivity extends AppCompatActivity {
                 }).addOnFailureListener(e -> Toast.makeText(EditPassActivity.this, "Account not verified!", Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return false;
     }
 }

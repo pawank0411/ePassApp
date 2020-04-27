@@ -23,9 +23,6 @@ import com.example.epassapp.MainActivity;
 import com.example.epassapp.Model.Pass;
 import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,10 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
@@ -46,11 +40,12 @@ import static com.example.epassapp.utilities.Constants.E_PASSES;
 import static com.example.epassapp.utilities.Constants.PASS_ACCEPTED;
 import static com.example.epassapp.utilities.Constants.PASS_PENDING;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
+import static com.example.epassapp.utilities.Constants.date;
 
 public class GeneratePassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextInputEditText pit_owner, section_no, bench_no, pass_date, serial_no, truck_no;
     private Spinner spinner, spinner_con;
-    private String date, serial_number, user_name;
+    private String serial_number, user_name;
     private MaterialTextView pass_count, account_verify;
     private ProgressDialog progressDialog;
     private ProgressBar progressBar;
@@ -85,18 +80,9 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setElevation(4);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Contractor");
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         Objects.requireNonNull(getSupportActionBar()).setElevation(0);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
-        date = sdf.format(new Date());
 
         Random random = new Random();
         serial_number = String.format("%06d", random.nextInt(1000000));
@@ -106,7 +92,16 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
             fromSiteInCharge = bundle.getBoolean("fromSiteInCharge");
         }
         if (fromSiteInCharge) {
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Generate Pass");
             contractor_layout.setVisibility(View.VISIBLE);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        } else {
+            Objects.requireNonNull(getSupportActionBar()).setTitle("Contractor");
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+            navigationView.setNavigationItemSelectedListener(this);
         }
         firestore = FirebaseFirestore.getInstance();
         CollectionReference userRef = firestore.collection(USER_ACCOUNTS);
@@ -129,43 +124,37 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                             progressDialog.setMessage("Generating pass..");
                             progressDialog.setCancelable(false);
                             progressDialog.show();
-                            epassReference.document(pass_ref_id + "#" + date).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    Pass epass = new Pass();
-                                    epass.setDate(date);
-                                    epass.setSerial_no(serial_number);
-                                    epass.setMine_no(spinner.getSelectedItem().toString().trim());
-                                    epass.setPit_owner(pit_owner.getText().toString().trim());
-                                    epass.setSection_no(section_no.getText().toString().trim());
-                                    epass.setBench_no(bench_no.getText().toString().trim());
-                                    epass.setTruck_no(truck_no.getText().toString().trim());
-                                    epass.setUser_id(pass_ref_id + "#" + date);
-                                    if (!fromSiteInCharge) {
-                                        epass.setContractor_name(user.getUser_name());
-                                    } else {
-                                        epass.setContractor_name(spinner_con.getSelectedItem().toString().trim());
-                                    }
-                                    epass.setPass_approved(PASS_PENDING);
-
-                                    epassReference.document(pass_ref_id + "#" + date).set(epass);
-                                    Toast.makeText(GeneratePassActivity.this, "Pass Generated Successfully!", Toast.LENGTH_SHORT).show();
-                                    firestore.collection(E_PASSES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                            if (task1.isSuccessful()) {
-                                                int count = 0;
-                                                for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
-                                                    if (Objects.requireNonNull(document.toObject(Pass.class)).getDate().equals(date))
-                                                        count++;
-                                                }
-                                                pass_count.setText("No. of truck pass generated today : " + count);
-                                            }
-                                        }
-                                    });
-                                    progressDialog.dismiss();
-                                    clearfeilds();
+                            epassReference.document(pass_ref_id + "#" + date).get().addOnSuccessListener(documentSnapshot -> {
+                                Pass epass = new Pass();
+                                epass.setDate(date);
+                                epass.setSerial_no(serial_number);
+                                epass.setMine_no(spinner.getSelectedItem().toString().trim());
+                                epass.setPit_owner(Objects.requireNonNull(pit_owner.getText()).toString().trim());
+                                epass.setSection_no(Objects.requireNonNull(section_no.getText()).toString().trim());
+                                epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
+                                epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());
+                                epass.setUser_id(pass_ref_id + "#" + date);
+                                if (!fromSiteInCharge) {
+                                    epass.setContractor_name(user.getUser_name());
+                                } else {
+                                    epass.setContractor_name(spinner_con.getSelectedItem().toString().trim());
                                 }
+                                epass.setPass_approved(PASS_PENDING);
+
+                                epassReference.document(pass_ref_id + "#" + date).set(epass);
+                                Toast.makeText(GeneratePassActivity.this, "Pass Generated Successfully!", Toast.LENGTH_SHORT).show();
+                                firestore.collection(E_PASSES).get().addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        int count = 0;
+                                        for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
+                                            if (Objects.requireNonNull(document.toObject(Pass.class)).getDate().equals(date))
+                                                count++;
+                                        }
+                                        pass_count.setText("No. of truck pass generated today : " + count);
+                                    }
+                                });
+                                progressDialog.dismiss();
+                                clearfeilds();
                             }).addOnFailureListener(e -> {
                                 progressDialog.dismiss();
                                 Toast.makeText(GeneratePassActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
@@ -184,7 +173,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
 
     public void clearfeilds() {
         Random random = new Random();
-        serial_number = String.format("%06d", random.nextInt(1000000));
+        serial_number = String.format(Locale.US, "%06d", random.nextInt(1000000));
         serial_no.setText(serial_number);
         pass_date.setText(date);
         spinner.setSelection(0);
@@ -192,6 +181,15 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
         pit_owner.setText("");
         section_no.setText("");
         bench_no.setText("");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return false;
     }
 
     @Override
@@ -207,7 +205,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
             }
             case R.id.active_pass:
                 Intent intent = new Intent(GeneratePassActivity.this, IndividualPassActivity.class);
-                intent.putExtra("CurrentContractorName",user_name);
+                intent.putExtra("CurrentContractorName", user_name);
                 startActivity(intent);
                 break;
             case R.id.history:
@@ -217,97 +215,3 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
         return false;
     }
 }
-//        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (user != null) {
-//            DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("user")
-//                    .child(Objects.requireNonNull(post)).child(user.getUid()).child(USER_VERIFIED);
-//
-//            db1.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-//                    String isVerified = dataSnapshot.getValue(String.class);
-//                    if (isVerified != null) {
-//                        if (isVerified.equals("1")) {
-//                            Toast.makeText(GeneratePass.this, "Account Verified", Toast.LENGTH_SHORT).show();
-//                            DatabaseReference db2 = FirebaseDatabase.getInstance().getReference("epass");
-//                            progressBar.setVisibility(View.GONE);
-//                            form_layout.setVisibility(View.VISIBLE);
-//                            mine_number.setText("1");
-//                            serial_no.setText(serial_number);
-//                            pass_date.setText(date);
-//                            db2.addChildEventListener(new ChildEventListener() {
-//                                @Override
-//                                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                                    if (Objects.requireNonNull(dataSnapshot.getKey()).matches(date)) {
-//                                        String a = Long.toString(dataSnapshot.getChildrenCount());
-//                                        pass_count.setText("No. of truck pass generated today : " + a);
-//                                    } else {
-//                                        pass_count.setText("No. of truck pass generated today : 0");
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                }
-//                            });
-//                            generate_pass.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View view) {
-//                                    if (!pit_owner.getText().toString().isEmpty() && !bench_no.getText().toString().trim().isEmpty() &&
-//                                            !truck_no.getText().toString().trim().isEmpty()
-//                                            && !section_no.getText().toString().trim().isEmpty()) {
-//                                        progressDialog = new ProgressDialog(GeneratePass.this);
-//                                        progressDialog.setTitle("Please wait");
-//                                        progressDialog.setCancelable(false);
-//                                        progressDialog.show();
-//                                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-//                                        String pass_id = firebaseDatabase.getReference("epass").push().getKey();
-//                                        DatabaseReference db = firebaseDatabase.getReference("epass").
-//                                                child(date).child(Objects.requireNonNull(pass_id));
-//                                        db.child(USER_ID).setValue(pass_id);
-//                                        db.child(PASS_SERIALNO).setValue(serial_number);
-//                                        db.child(PASS_MINENO).setValue("1");
-//                                        db.child(PASS_PITOWNER).setValue(pit_owner.getText().toString());
-//                                        db.child(PASS_BENCHNO).setValue(bench_no.getText().toString());
-//                                        db.child(PASS_TRUCKNO).setValue(truck_no.getText().toString());
-//                                        db.child(PASS_SECTIONNO).setValue(section_no.getText().toString());
-//                                        db.child(PASS_DATE).setValue(date);
-//                                        db.child(PASS_APPROVED).setValue("pending");
-//                                        DatabaseReference db1 = FirebaseDatabase.getInstance().getReference("date").child(date);
-//                                        db1.child("date").setValue(date);
-//                                        clearfeilds();
-//                                    } else {
-//                                        Toast.makeText(GeneratePass.this, "please fill all the details", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            });
-//                        } else {
-//                            progressBar.setVisibility(View.GONE);
-//                            account_verify.setVisibility(View.VISIBLE);
-//                            Toast.makeText(GeneratePass.this, "Account not verified!", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//                    Log.d("DatabaseError", databaseError.getMessage());
-//                }
-//            });
-//        }
