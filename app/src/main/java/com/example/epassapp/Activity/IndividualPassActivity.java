@@ -44,7 +44,7 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
     private PassAdapter passAdapter;
     private MaterialTextView account_verify;
     private ProgressBar progressBar;
-    private boolean fromPitOwner;
+    private boolean fromPitOwner, fromHistory;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,21 +73,36 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
         if (bundle != null) {
             user_name = bundle.getString("CurrentContractorName");
         }
+        if (bundle != null) {
+            fromHistory = bundle.getBoolean("fromHistory");
+        }
+
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         CollectionReference contractorpassRef = firebaseFirestore.collection(E_PASSES);
 
         if (!fromPitOwner) {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Active Passes");
+            if (!fromHistory) {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Active Passes");
+            } else {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("History");
+            }
             contractorpassRef.whereEqualTo(PASS_CONTRACTOR, user_name).addSnapshotListener((queryDocumentSnapshots, e) -> {
                 passInfo.clear();
                 progressBar.setVisibility(View.GONE);
 
                 if (queryDocumentSnapshots != null) {
-                    for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                        if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date) &&
-                                Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
-                                && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
-                            passInfo.add(snapshot.toObject(Pass.class));
+                    if (!fromHistory) {
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                            if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date) &&
+                                    Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
+                                    && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
+                                passInfo.add(snapshot.toObject(Pass.class));
+                        }
+                    } else {
+                        for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                            if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED))
+                                passInfo.add(snapshot.toObject(Pass.class));
+                        }
                     }
                 }
                 if (passInfo.size() == 0) {
@@ -104,15 +119,19 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
                 passAdapter.notifyDataSetChanged();
             });
         } else {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Pit Owner");
-            DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-            NavigationView navigationView = findViewById(R.id.navigation_view);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
-            navigationView.setNavigationItemSelectedListener(this);
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.navigation_menu_normal);
+            if (!fromHistory) {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Pit Owner");
+                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+                NavigationView navigationView = findViewById(R.id.navigation_view);
+                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                drawerLayout.addDrawerListener(toggle);
+                toggle.syncState();
+                navigationView.setNavigationItemSelectedListener(this);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.navigation_menu_normal);
+            } else {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("History");
+            }
 
             firebaseFirestore.collection(USER_ACCOUNTS)
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
@@ -127,11 +146,18 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
                                         progressBar.setVisibility(View.GONE);
 
                                         if (queryDocumentSnapshots != null) {
-                                            for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
-                                                if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date)
-                                                        && Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
-                                                        && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
-                                                    passInfo.add(snapshot.toObject(Pass.class));
+                                            if (!fromHistory) {
+                                                for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getDate().equals(Constants.date)
+                                                            && Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED)
+                                                            && !Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_REJECTED))
+                                                        passInfo.add(snapshot.toObject(Pass.class));
+                                                }
+                                            } else {
+                                                for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
+                                                    if (Objects.requireNonNull(snapshot.toObject(Pass.class)).getPass_approved().equals(PASS_ACCEPTED))
+                                                        passInfo.add(snapshot.toObject(Pass.class));
+                                                }
                                             }
                                         }
                                         if (passInfo.size() == 0) {
@@ -157,7 +183,7 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home && !fromPitOwner) {
+        if (id == android.R.id.home && !fromPitOwner || fromHistory) {
             finish();
         } else {
             switch (id) {
@@ -168,7 +194,10 @@ public class IndividualPassActivity extends ApprovePassActivity implements Navig
                     break;
                 }
                 case R.id.history: {
-                    //
+                    Intent intent = new Intent(IndividualPassActivity.this, IndividualPassActivity.class);
+                    intent.putExtra("fromHistory", true);
+                    startActivity(intent);
+                    break;
                 }
             }
         }

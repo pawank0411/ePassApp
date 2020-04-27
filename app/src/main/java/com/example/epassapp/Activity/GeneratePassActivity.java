@@ -203,14 +203,19 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                 startActivity(intent);
                 break;
             }
-            case R.id.active_pass:
+            case R.id.active_pass: {
                 Intent intent = new Intent(GeneratePassActivity.this, IndividualPassActivity.class);
                 intent.putExtra("CurrentContractorName", user_name);
                 startActivity(intent);
                 break;
-            case R.id.history:
-                Toast.makeText(this, "history", Toast.LENGTH_SHORT).show();
+            }
+            case R.id.history: {
+                Intent intent = new Intent(GeneratePassActivity.this, IndividualPassActivity.class);
+                intent.putExtra("CurrentContractorName", user_name);
+                intent.putExtra("fromHistory", true);
+                startActivity(intent);
                 break;
+            }
         }
         return false;
     }
