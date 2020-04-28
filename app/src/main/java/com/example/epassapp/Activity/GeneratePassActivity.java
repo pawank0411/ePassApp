@@ -17,6 +17,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.epassapp.MainActivity;
@@ -41,6 +42,7 @@ import static com.example.epassapp.utilities.Constants.PASS_ACCEPTED;
 import static com.example.epassapp.utilities.Constants.PASS_PENDING;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
 import static com.example.epassapp.utilities.Constants.date;
+import static com.example.epassapp.utilities.Constants.time;
 
 public class GeneratePassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextInputEditText pit_owner, section_no, bench_no, pass_date, serial_no, truck_no;
@@ -53,6 +55,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
     private ConstraintLayout form_layout;
     private FirebaseFirestore firestore;
     private boolean fromSiteInCharge;
+    private DrawerLayout drawerLayout;
 
     public static String convertToTitleCaseIteratingChars(String text) {
         if (text == null || text.isEmpty()) {
@@ -95,7 +98,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
         LinearLayout contractor_layout = findViewById(R.id.contractor_layout);
         spinner_con = findViewById(R.id.spinner_2);
 
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,48 +140,59 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                         serial_no.setText(serial_number);
                         pass_date.setText(date);
                         generate_pass.setOnClickListener(view -> {
-                            final CollectionReference epassReference = firestore.collection(E_PASSES);
-                            final String pass_ref_id = epassReference.document().getId();
-                            progressDialog = new ProgressDialog(GeneratePassActivity.this);
-                            progressDialog.setTitle("Please wait");
-                            progressDialog.setMessage("Generating pass..");
-                            progressDialog.setCancelable(false);
-                            progressDialog.show();
-                            epassReference.document(pass_ref_id + "#" + date).get().addOnSuccessListener(documentSnapshot -> {
-                                Pass epass = new Pass();
-                                epass.setDate(date);
-                                epass.setSerial_no(serial_number);
-                                epass.setMine_no(spinner.getSelectedItem().toString().trim());
-                                epass.setPit_owner(convertToTitleCaseIteratingChars(Objects.requireNonNull(pit_owner.getText()).toString().trim()));
-                                epass.setSection_no(Objects.requireNonNull(section_no.getText()).toString().trim());
-                                epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
-                                epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());
-                                epass.setUser_id(pass_ref_id + "#" + date);
-                                if (!fromSiteInCharge) {
-                                    epass.setContractor_name(user.getUser_name());
-                                } else {
-                                    epass.setContractor_name(spinner_con.getSelectedItem().toString().trim());
-                                }
-                                epass.setPass_approved(PASS_PENDING);
-
-                                epassReference.document(pass_ref_id + "#" + date).set(epass);
-                                Toast.makeText(GeneratePassActivity.this, "Pass Generated Successfully!", Toast.LENGTH_SHORT).show();
-                                firestore.collection(E_PASSES).get().addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        int count = 0;
-                                        for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
-                                            if (Objects.requireNonNull(document.toObject(Pass.class)).getDate().equals(date))
-                                                count++;
+                            if (!isEmpty()) {
+                                final CollectionReference epassReference = firestore.collection(E_PASSES);
+                                final String pass_ref_id = epassReference.document().getId();
+                                progressDialog = new ProgressDialog(GeneratePassActivity.this);
+                                progressDialog.setTitle("Please wait");
+                                progressDialog.setMessage("Generating pass..");
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
+                                epassReference.document(pass_ref_id + "#" + date).get().addOnSuccessListener(documentSnapshot -> {
+                                    Pass epass = new Pass();
+                                    epass.setDate(date);
+                                    epass.setPass_time(time);
+                                    epass.setSerial_no(serial_number);
+                                    epass.setMine_no(spinner.getSelectedItem().toString().trim());
+                                    epass.setPit_owner(convertToTitleCaseIteratingChars(Objects.requireNonNull(pit_owner.getText()).toString().trim()));
+                                    epass.setSection_no(Objects.requireNonNull(section_no.getText()).toString().trim());
+                                    epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
+                                    epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());
+                                    epass.setUser_id(pass_ref_id + "#" + date);
+                                    if (!fromSiteInCharge) {
+                                        epass.setContractor_name(user.getUser_name());
+                                    } else {
+                                        if (!spinner_con.getSelectedItem().toString().equals("Select an option")) {
+                                            epass.setContractor_name(spinner_con.getSelectedItem().toString().trim());
+                                        } else {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(this, "Please fill all the details!", Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
-                                        pass_count.setText("No. of truck pass generated today : " + count);
                                     }
+                                    epass.setPass_approved(PASS_PENDING);
+
+                                    epassReference.document(pass_ref_id + "#" + date).set(epass);
+                                    Toast.makeText(GeneratePassActivity.this, "Pass Generated Successfully!", Toast.LENGTH_SHORT).show();
+                                    firestore.collection(E_PASSES).get().addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            int count = 0;
+                                            for (DocumentSnapshot document : Objects.requireNonNull(task1.getResult())) {
+                                                if (Objects.requireNonNull(document.toObject(Pass.class)).getDate().equals(date))
+                                                    count++;
+                                            }
+                                            pass_count.setText("No. of truck pass generated today : " + count);
+                                        }
+                                    });
+                                    progressDialog.dismiss();
+                                    clearfeilds();
+                                }).addOnFailureListener(e -> {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(GeneratePassActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
                                 });
-                                progressDialog.dismiss();
-                                clearfeilds();
-                            }).addOnFailureListener(e -> {
-                                progressDialog.dismiss();
-                                Toast.makeText(GeneratePassActivity.this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show();
-                            });
+                            } else {
+                                Toast.makeText(this, "Please fill all the details!", Toast.LENGTH_SHORT).show();
+                            }
                         });
                     } else {
                         progressBar.setVisibility(View.GONE);
@@ -201,6 +215,16 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
         pit_owner.setText("");
         section_no.setText("");
         bench_no.setText("");
+    }
+
+    public boolean isEmpty() {
+        if (spinner.getSelectedItem().toString().equals("Select an option"))
+            return true;
+        else if (Objects.requireNonNull(pit_owner.getText()).toString().isEmpty())
+            return true;
+        else if (Objects.requireNonNull(section_no.getText()).toString().isEmpty())
+            return true;
+        else return Objects.requireNonNull(bench_no.getText()).toString().isEmpty();
     }
 
     @Override
@@ -238,5 +262,18 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
             }
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            if (fromSiteInCharge) {
+                finish();
+            } else {
+                moveTaskToBack(true);
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@
     <string name="verify_otp">VERIFY OTP</string>
     <string name="otp">OTP</string>
     <string name="don_t_recived_the_code">Don\'t Received The code ?</string>
-    <string name="profile">PROFILE</string>
+    <string name="profile">Create an account </string>
     <string name="enter_name">Enter Name</string>
     <string name="post">POST</string>
     <string name="register">register</string>
@@ -48,6 +48,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="search">Search</string>
+    <string name="online_gate_pass_for_truck_loading"><u>ONLINE GATE PASS FOR TRUCK LOADING</u></string>
+    <string name="ultratech_cement_ltd">ULTRATECH CEMENT LTD.</string>
+    <string name="rajshree_limestone_mines"><u>Rajshree Limestone Mines</u></string>
+    <string name="already_having_an_account_log_in">Already having an account? <u>Log In</u></string>
+    <string name="unit_birla_white">(Unit : Birla White)</string>
+    <string name="send_code_again">Send code again</string>
     <string-array name="post">
         <item>Select an option</item>
         <item>Contractor</item>

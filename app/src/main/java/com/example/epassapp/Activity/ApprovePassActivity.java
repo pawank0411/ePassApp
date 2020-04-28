@@ -26,6 +26,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,6 +71,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
     private AskSignature askSignature;
     private boolean fromHistory;
     private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
 
         askPermission();
         askSignature = new AskSignature(this);
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
         account_verify = findViewById(R.id.account_verify);
         recyclerView = findViewById(R.id.recycler_view);
@@ -166,10 +168,15 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
 
     @Override
     public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
         if (!fromHistory) {
             moveTaskToBack(true);
         } else {
             super.onBackPressed();
+            finish();
         }
     }
 
@@ -193,6 +200,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
     public void onAcceptClicked(String pass_date, final String pass_id) {
         if (!signature_exists) {
             askSignature.GetSignature(user_name);
+            signature_exists = true;
         } else {
             DocumentReference documentReference = FirebaseFirestore.getInstance().collection(E_PASSES).document(pass_id);
             documentReference.update(PASS_APPROVED, PASS_ACCEPTED).addOnCompleteListener(task -> {

@@ -2,7 +2,6 @@ package com.example.epassapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -16,6 +15,7 @@ import com.example.epassapp.Activity.IndividualPassActivity;
 import com.example.epassapp.Activity.LoginActivity;
 import com.example.epassapp.Activity.PassActivity;
 import com.example.epassapp.Model.User;
+import com.example.epassapp.utilities.AppStatus;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,16 +33,29 @@ import static com.example.epassapp.utilities.Constants.USER_NAME;
 
 public class MainActivity extends AppCompatActivity {
     private String post;
+    private ProgressBar progressBar;
+    private MaterialTextView account_verify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ProgressBar progressBar = findViewById(R.id.progress);
-        MaterialTextView account_verify = findViewById(R.id.account_verify);
+        progressBar = findViewById(R.id.progress);
+        account_verify = findViewById(R.id.account_verify);
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.simpleSwipeRefreshLayout);
+        AppStatus appStatus = new AppStatus(this);
+        if (!appStatus.isOnline()) {
+            Toast.makeText(this, "Please make sure you have active internet connection!", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            assignposts();
+            swipeRefreshLayout.setOnRefreshListener(this::assignposts);
+        }
+    }
 
+
+    public void assignposts() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseFirestore.getInstance().collection(USER_ACCOUNTS).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                     .addOnCompleteListener(task -> {
@@ -89,19 +102,28 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 progressBar.setVisibility(View.GONE);
                                 account_verify.setVisibility(View.VISIBLE);
-                                Toast.makeText(this, "Account not verified!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }).addOnFailureListener(e -> {
-                Log.d("error_main", e.getMessage());
                 Toast.makeText(MainActivity.this, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show();
             });
         } else {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null && bundle.getBoolean("fromLoginActivity"))
+                intent.putExtra("fromMainActivity", true);
             startActivity(intent);
         }
-
-        swipeRefreshLayout.setOnRefreshListener(this::recreate);
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        assignposts();
+    }
 }

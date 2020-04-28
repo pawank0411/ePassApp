@@ -12,7 +12,15 @@ public class Pass {
     private String user_id;
     private String approver_name;
     private String contractor_name;
+    private String pass_time;
 
+    public String getPass_time() {
+        return pass_time;
+    }
+
+    public void setPass_time(String pass_time) {
+        this.pass_time = pass_time;
+    }
 
     public String getContractor_name() {
         return contractor_name;

@@ -8,12 +8,12 @@
     tools:context=".Activity.LoginActivity">
 
     <LinearLayout
-        android:id="@+id/l1"
+        android:id="@+id/asknumber_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
@@ -38,8 +38,9 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/phn"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:inputType="phone"
-                android:layout_height="wrap_content" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -55,109 +56,127 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/l2"
+        android:id="@+id/verifyotp_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="@string/verify_otp"
-                    android:textAlignment="center"
-                    android:textColor="#0e0e0e"
-                    android:textSize="30sp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:hint="@string/otp"
-                    android:textColorHint="@color/txtclr"
-                    app:boxStrokeColor="@color/bgcolor1"
-                    app:hintEnabled="true"
-                    app:hintTextColor="@color/bgcolor1">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/code"
-                        android:layout_width="match_parent"
-                        android:inputType="number"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnver"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="@string/verify"
-                    android:textColor="@color/white"
-                    app:backgroundTint="#283959"
-                    app:cornerRadius="8dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/don_t_recived_the_code"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/resend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Send code again"
-                        android:textColor="#FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/l3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:text="@string/profile"
+            android:layout_margin="10dp"
+            android:text="@string/verify_otp"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="#0e0e0e"
             android:textSize="30sp" />
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/otp"
+            android:textColorHint="@color/txtclr"
+            app:boxStrokeColor="@color/bgcolor1"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/bgcolor1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/verify"
+            android:textColor="@color/white"
+            app:backgroundTint="#283959"
+            app:cornerRadius="8dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/don_t_recived_the_code"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/resend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/send_code_again"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/profile"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_marginHorizontal="40dp"
-            android:layout_marginBottom="10dp"
+            android:background="@drawable/black_border"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/post"
+                android:textColor="#0e0e0e" />
+
+            <Spinner
+                android:id="@+id/spinner_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:entries="@array/post" />
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginHorizontal="40dp"
             android:hint="@string/enter_name"
             android:textColorHint="@color/txtclr"
             app:boxStrokeColor="@color/bgcolor1"
@@ -170,30 +189,34 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <LinearLayout
+            android:id="@+id/contractor_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="40dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/black_border"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:text="@string/post"
+                android:layout_marginStart="10dp"
+                android:text="@string/contractor"
+                android:textAllCaps="true"
                 android:textColor="#0e0e0e" />
 
             <Spinner
-                android:id="@+id/spinner_1"
+                android:id="@+id/spinner_3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
+                android:layout_marginStart="60dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:entries="@array/post" />
+                android:entries="@array/contractors" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -204,8 +227,8 @@
             android:layout_marginHorizontal="40dp"
             android:layout_marginBottom="10dp"
             android:hint="@string/enter_truck_no"
-            android:visibility="gone"
             android:textColorHint="@color/txtclr"
+            android:visibility="gone"
             app:boxStrokeColor="@color/bgcolor1"
             app:hintEnabled="true"
             app:hintTextColor="@color/bgcolor1">
@@ -220,10 +243,29 @@
             android:id="@+id/btn1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-           android:layout_margin="10dp"
+            android:layout_margin="10dp"
             android:text="@string/register"
             android:textColor="@color/white"
             app:backgroundTint="#283959"
             app:cornerRadius="8dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/already_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/already_having_an_account_log_in"
+                android:textAlignment="center"
+                android:textColor="#283959"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </RelativeLayout>

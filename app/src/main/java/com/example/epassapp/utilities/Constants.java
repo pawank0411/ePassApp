@@ -27,9 +27,10 @@ public class Constants {
     public static final String PASS_REJECTED = "Rejected";
     public static final String APPROVER_NAME = "approver_name";
     public static final String PASS_CONTRACTOR = "contractor_name";
+    public static final String PASS_CREATED_TIME = "pass_time";
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+    private static SimpleDateFormat time_sdf = new SimpleDateFormat("hh:mm a", Locale.US);
     public static final String date = sdf.format(new Date());
-
-
+    public static final String time = time_sdf.format(new Date());
 }

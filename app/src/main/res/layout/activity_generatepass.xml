@@ -329,6 +329,7 @@
             android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:indeterminateTint="#283959"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/account_verify"
             app:layout_constraintStart_toStartOf="parent"

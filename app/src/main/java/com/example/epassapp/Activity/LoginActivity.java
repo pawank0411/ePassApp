@@ -1,14 +1,13 @@
 package com.example.epassapp.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,10 +15,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.epassapp.MainActivity;
 import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,60 +36,158 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.epassapp.utilities.Constants.PASS_PENDING;
+import static com.example.epassapp.utilities.Constants.POST_CONTRACTOR;
+import static com.example.epassapp.utilities.Constants.POST_TRUCKDRIVER;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText editText1;
-    private LinearLayout l1, l2, l3;
-    private EditText editText, t1, t2;
+    private TextInputEditText editText1, editText, t1, t2;
+    private LinearLayout asknumber_layout, verifyotp_layout, profile_layout, contractor_layout;
     private TextView resend;
-    private Button btn1;
-    private Spinner spinner;
+    private Spinner spinner, spinner_con;
     private String number, id, phn, selected_post;
     private FirebaseAuth mAuth;
     private FirebaseUser currentuser;
+    private String username, userpost, contractorname, trucknumber;
+    private TextInputLayout truck_layout, name_layout;
+    private ProgressDialog progressDialog;
+    private PhoneAuthCredential credential;
+
+    public static String convertToTitleCaseIteratingChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        l1 = findViewById(R.id.l1);
-        l2 = findViewById(R.id.l2);
-        l3 = findViewById(R.id.l3);
+        asknumber_layout = findViewById(R.id.asknumber_layout);
+        verifyotp_layout = findViewById(R.id.verifyotp_layout);
+        profile_layout = findViewById(R.id.profile_layout);
         editText1 = findViewById(R.id.phn);
         t1 = findViewById(R.id.t1);
-        btn1 = findViewById(R.id.btn1);
+        MaterialButton btn1 = findViewById(R.id.btn1);
         mAuth = FirebaseAuth.getInstance();
         editText = findViewById(R.id.code);
         resend = findViewById(R.id.resend);
         spinner = findViewById(R.id.spinner_1);
+        spinner_con = findViewById(R.id.spinner_3);
+        MaterialButton button_signin = findViewById(R.id.btnsignin);
+        truck_layout = findViewById(R.id.truck_layout);
+        contractor_layout = findViewById(R.id.contractor_layout);
+        name_layout = findViewById(R.id.name_layout);
+        ConstraintLayout already_account = findViewById(R.id.already_account);
 
-        findViewById(R.id.btnsignin).setOnClickListener(v -> {
-            String number = editText1.getText().toString().trim();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Making app ready for you");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please wait..");
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selected_post = spinner.getSelectedItem().toString();
+                if (spinner.getSelectedItem().toString().equals(POST_TRUCKDRIVER)) {
+                    truck_layout.setVisibility(View.VISIBLE);
+                    t2 = findViewById(R.id.t2);
+                } else {
+                    truck_layout.setVisibility(View.GONE);
+                }
+                if (spinner.getSelectedItem().toString().equals(POST_CONTRACTOR)) {
+                    name_layout.setVisibility(View.GONE);
+                    contractor_layout.setVisibility(View.VISIBLE);
+                } else {
+                    name_layout.setVisibility(View.VISIBLE);
+                    contractor_layout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        already_account.setOnClickListener(view -> {
+            profile_layout.setVisibility(View.GONE);
+            asknumber_layout.setVisibility(View.VISIBLE);
+        });
+
+        btn1.setOnClickListener(view -> {
+            if (isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please fill all the details!", Toast.LENGTH_SHORT).show();
+            } else {
+                userpost = spinner.getSelectedItem().toString();
+                if (userpost.equals(POST_TRUCKDRIVER)) {
+                    trucknumber = Objects.requireNonNull(t2.getText()).toString().trim();
+                    username = convertToTitleCaseIteratingChars(Objects.requireNonNull(t1.getText()).toString().trim());
+                } else if (userpost.equals(POST_CONTRACTOR))
+                    contractorname = spinner_con.getSelectedItem().toString();
+                else
+                    username = convertToTitleCaseIteratingChars(Objects.requireNonNull(t1.getText()).toString().trim());
+                profile_layout.setVisibility(View.GONE);
+                asknumber_layout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        button_signin.setOnClickListener(view1 -> {
+            number = Objects.requireNonNull(editText1.getText()).toString().trim();
             if (number.isEmpty() || number.length() < 10) {
                 editText1.setError("wrong no");
                 editText1.requestFocus();
             } else {
-                phn = "+91" + number;
-                otpver(phn);
+                number = "+91" + number;
+                otpver();
             }
         });
+
     }
 
-    public void otpver(String phn) {
-        l1.setVisibility(View.GONE);
-        l2.setVisibility(View.VISIBLE);
-        Button btn = findViewById(R.id.btnver);
-        number = phn;
+    public boolean isEmpty() {
+        if (name_layout.getVisibility() == View.VISIBLE && Objects.requireNonNull(t1.getText()).toString().isEmpty())
+            return true;
+        else if (spinner.getSelectedItem().toString().equals("Select an option"))
+            return true;
+        else if (spinner.getSelectedItem().toString().equals(POST_CONTRACTOR) && spinner_con.getSelectedItem().toString().equals("Select an option"))
+            return true;
+        else
+            return spinner.getSelectedItem().toString().equals(POST_TRUCKDRIVER) && Objects.requireNonNull(t2.getText()).toString().trim().isEmpty();
+    }
+
+    public void otpver() {
+        asknumber_layout.setVisibility(View.GONE);
+        verifyotp_layout.setVisibility(View.VISIBLE);
+        MaterialButton btn = findViewById(R.id.btnver);
         sendVerification();
         btn.setOnClickListener(v -> {
-            String code = editText.getText().toString().trim();
+            String code = Objects.requireNonNull(editText.getText()).toString().trim();
             if (code.isEmpty() || code.length() < 6) {
                 editText.setError("enter code");
                 editText.requestFocus();
             } else {
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(id, code);
+                verifyotp_layout.setVisibility(View.GONE);
+                progressDialog.show();
+                credential = PhoneAuthProvider.getCredential(id, code);
                 signInWithPhoneAuthCredential(credential);
             }
         });
@@ -120,10 +220,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onCodeSent(@NonNull String s, @NonNull @NotNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         LoginActivity.this.id = s;
+                        Toast.makeText(LoginActivity.this, "Code has been successfully sent to your number!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onVerificationCompleted(@NonNull @NotNull PhoneAuthCredential phoneAuthCredential) {
+                        verifyotp_layout.setVisibility(View.GONE);
+                        progressDialog.show();
                         signInWithPhoneAuthCredential(phoneAuthCredential);
                     }
 
@@ -140,84 +243,43 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         profile();
+                        Toast.makeText(this, "Verification Successful!", Toast.LENGTH_SHORT).show();
                     } else {
+                        progressDialog.dismiss();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
                         Toast.makeText(LoginActivity.this, "Verification Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    public static String convertToTitleCaseIteratingChars(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-
-        StringBuilder converted = new StringBuilder();
-
-        boolean convertNext = true;
-        for (char ch : text.toCharArray()) {
-            if (Character.isSpaceChar(ch)) {
-                convertNext = true;
-            } else if (convertNext) {
-                ch = Character.toTitleCase(ch);
-                convertNext = false;
-            } else {
-                ch = Character.toLowerCase(ch);
-            }
-            converted.append(ch);
-        }
-
-        return converted.toString();
-    }
-
     private void profile() {
-        l2.setVisibility(View.GONE);
         currentuser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         final CollectionReference usersReference = firestore.collection(USER_ACCOUNTS);
-        TextInputLayout truck_layout = findViewById(R.id.truck_layout);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selected_post = spinner.getSelectedItem().toString();
-                if (spinner.getSelectedItem().toString().equals("Truck driver")) {
-                    truck_layout.setVisibility(View.VISIBLE);
-                    t2 = findViewById(R.id.t2);
-                } else {
-                    TextInputLayout truck_layout = findViewById(R.id.truck_layout);
-                    truck_layout.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
         usersReference.document(Objects.requireNonNull(currentuser).getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                progressDialog.dismiss();
                 if (task.getResult() == null || !task.getResult().exists()) {
                     //Signed up
-                    l3.setVisibility(View.VISIBLE);
-                    btn1.setOnClickListener(view -> {
-                        if (t1.getText().toString().matches("") || spinner.getSelectedItem().toString().equals("Select an option")) {
-                            Toast.makeText(LoginActivity.this, "Enter Full details", Toast.LENGTH_SHORT).show();
-                        } else {
-                            User user = new User();
-                            user.setIsVerified(PASS_PENDING);
-                            user.setUser_id(currentuser.getUid());
-                            user.setUser_name(convertToTitleCaseIteratingChars(t1.getText().toString().trim()));
-                            user.setUser_phone(phn);
-                            user.setUser_post(selected_post);
-                            if (selected_post.equals("Truck driver")) {
-                                user.setTruck_number(t2.getText().toString().trim());
-                            }
-                            usersReference.document(currentuser.getUid()).set(user);
-                            Toast.makeText(LoginActivity.this, "Signed Up successfully", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
+                    User user = new User();
+                    user.setIsVerified(PASS_PENDING);
+                    user.setUser_id(currentuser.getUid());
+                    if (!spinner.getSelectedItem().toString().equals(POST_CONTRACTOR)) {
+                        user.setUser_name(convertToTitleCaseIteratingChars(username));
+                    } else {
+                        user.setUser_name(contractorname);
+                    }
+                    user.setUser_phone(phn);
+                    user.setUser_post(selected_post);
+                    if (spinner.getSelectedItem().toString().equals(POST_TRUCKDRIVER)) {
+                        user.setTruck_number(trucknumber);
+                    }
+                    usersReference.document(currentuser.getUid()).set(user);
+                    Toast.makeText(LoginActivity.this, "Signed Up successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
                 } else {
                     //Logged-In
                     Toast.makeText(LoginActivity.this, "Logged In successfully", Toast.LENGTH_SHORT).show();
@@ -233,6 +295,15 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.getBoolean("fromMainActivity")) {
+            moveTaskToBack(true);
+            recreate();
+        } else {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("fromLoginActivity", true);
+            startActivity(intent);
+        }
     }
+
 }

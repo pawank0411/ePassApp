@@ -17,6 +17,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,6 +53,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
     private ProgressBar progressBar;
     private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
     private boolean fromWayBridge, fromHistory, fromSiteInCharge;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
         editor.apply();
 
         if (!fromHistory && !fromSiteInCharge) {
-            DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+            drawerLayout = findViewById(R.id.drawer_layout);
             NavigationView navigationView = findViewById(R.id.navigation_view);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawerLayout.addDrawerListener(toggle);
@@ -162,7 +164,11 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                 }
             }).addOnFailureListener(e -> Toast.makeText(PassActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show());
         } else {
-            Objects.requireNonNull(getSupportActionBar()).setTitle("Truck Owner");
+            if (!fromHistory) {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("Truck Owner");
+            } else {
+                Objects.requireNonNull(getSupportActionBar()).setTitle("History");
+            }
             userRef.document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                     .get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -302,4 +308,18 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
         });
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        if (!fromHistory && !fromSiteInCharge) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                moveTaskToBack(true);
+            }
+        } else {
+            finish();
+        }
+    }
+
 }
