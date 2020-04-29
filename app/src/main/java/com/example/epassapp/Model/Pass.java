@@ -13,6 +13,15 @@ public class Pass {
     private String approver_name;
     private String contractor_name;
     private String pass_time;
+    private String ex_user_name;
+
+    public String getEx_user_name() {
+        return ex_user_name;
+    }
+
+    public void setEx_user_name(String ex_user_name) {
+        this.ex_user_name = ex_user_name;
+    }
 
     public String getPass_time() {
         return pass_time;

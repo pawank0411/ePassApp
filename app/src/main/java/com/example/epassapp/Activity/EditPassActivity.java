@@ -33,6 +33,7 @@ import java.util.Objects;
 import static com.example.epassapp.utilities.Constants.E_PASSES;
 import static com.example.epassapp.utilities.Constants.PASS_ACCEPTED;
 import static com.example.epassapp.utilities.Constants.PASS_BENCHNO;
+import static com.example.epassapp.utilities.Constants.PASS_CREATED_BY;
 import static com.example.epassapp.utilities.Constants.PASS_DATE;
 import static com.example.epassapp.utilities.Constants.PASS_MINENO;
 import static com.example.epassapp.utilities.Constants.PASS_PITOWNER;
@@ -46,7 +47,7 @@ public class EditPassActivity extends AppCompatActivity {
     private TextInputEditText pit_owner, section_no, bench_no, pass_date, serial_no, truck_no;
     private Spinner spinner;
     private ProgressDialog progressDialog;
-    private String pass_id;
+    private String pass_id, created_by;
     private boolean signature_exists;
     private String user_name;
 
@@ -89,6 +90,7 @@ public class EditPassActivity extends AppCompatActivity {
             bench_no.setText(bundle.getString(PASS_BENCHNO));
             pass_date.setText(bundle.getString(PASS_DATE));
             pass_id = bundle.getString(USER_ID);
+            created_by = bundle.getString(PASS_CREATED_BY);
         }
 
         FirebaseFirestore.getInstance().collection(USER_ACCOUNTS)
@@ -132,6 +134,7 @@ public class EditPassActivity extends AppCompatActivity {
                         epass.setTruck_no(truck_no.getText().toString().trim());
                         epass.setUser_id(pass_id);
                         epass.setPass_approved(PASS_ACCEPTED);
+                        epass.setEx_user_name(created_by);
 
                         epassReference.document(pass_id).set(epass);
                         progressDialog.dismiss();

@@ -159,6 +159,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                                     epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
                                     epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());
                                     epass.setUser_id(pass_ref_id + "#" + date);
+                                    epass.setEx_user_name(user.getEx_user_name());
                                     if (!fromSiteInCharge) {
                                         epass.setContractor_name(user.getUser_name());
                                     } else {

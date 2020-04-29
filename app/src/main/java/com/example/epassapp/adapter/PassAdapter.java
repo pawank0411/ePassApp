@@ -56,6 +56,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.ViewHolder> {
         holder.bench_no.setText(passArrayList.get(position).getBench_no());
         holder.truck_no.setText(passArrayList.get(position).getTruck_no());
         holder.pass_contractorname.setText(passArrayList.get(position).getContractor_name());
+        holder.pass_createdusername.setText(passArrayList.get(position).getEx_user_name());
 
         holder.signature_layout.setVisibility(View.VISIBLE);
         holder.approver_name.setText("Approved By : " + passArrayList.get(position).getApprover_name());
@@ -91,7 +92,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no, pass_contractorname;
+        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no, pass_contractorname, pass_createdusername;
         ConstraintLayout signature_layout;
         ProgressBar progressBar;
         ImageView signature;
@@ -112,6 +113,7 @@ public class PassAdapter extends RecyclerView.Adapter<PassAdapter.ViewHolder> {
             truck_no = itemView.findViewById(R.id.pass_truckno);
             pass_contractorname = itemView.findViewById(R.id.pass_contractorname);
             progressBar = itemView.findViewById(R.id.progress);
+            pass_createdusername = itemView.findViewById(R.id.pass_createdusername);
         }
     }
 }

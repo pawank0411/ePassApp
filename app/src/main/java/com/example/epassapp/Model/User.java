@@ -7,6 +7,15 @@ public class User {
     private String user_name;
     private String user_post;
     private String user_phone;
+    private String ex_user_name;
+
+    public String getEx_user_name() {
+        return ex_user_name;
+    }
+
+    public void setEx_user_name(String ex_user_name) {
+        this.ex_user_name = ex_user_name;
+    }
 
     public String getUser_phone() {
         return user_phone;

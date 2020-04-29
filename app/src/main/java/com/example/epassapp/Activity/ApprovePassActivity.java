@@ -309,6 +309,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 Toast.makeText(this, "Signed Out Successfully", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ApprovePassActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
                 break;
             }
             case R.id.active_pass: {

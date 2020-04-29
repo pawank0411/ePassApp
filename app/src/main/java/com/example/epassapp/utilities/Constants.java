@@ -28,6 +28,7 @@ public class Constants {
     public static final String APPROVER_NAME = "approver_name";
     public static final String PASS_CONTRACTOR = "contractor_name";
     public static final String PASS_CREATED_TIME = "pass_time";
+    public static final String PASS_CREATED_BY = "ex_user_name";
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
     private static SimpleDateFormat time_sdf = new SimpleDateFormat("hh:mm a", Locale.US);

@@ -54,6 +54,7 @@
     <string name="already_having_an_account_log_in">Already having an account? <u>Log In</u></string>
     <string name="unit_birla_white">(Unit : Birla White)</string>
     <string name="send_code_again">Send code again</string>
+    <string name="pass_issued_by">Pass Issued By :</string>
     <string-array name="post">
         <item>Select an option</item>
         <item>Contractor</item>

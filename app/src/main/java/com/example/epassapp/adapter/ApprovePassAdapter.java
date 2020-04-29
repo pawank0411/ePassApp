@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import static com.example.epassapp.utilities.Constants.APPROVER_NAME;
 import static com.example.epassapp.utilities.Constants.PASS_BENCHNO;
+import static com.example.epassapp.utilities.Constants.PASS_CREATED_BY;
 import static com.example.epassapp.utilities.Constants.PASS_DATE;
 import static com.example.epassapp.utilities.Constants.PASS_MINENO;
 import static com.example.epassapp.utilities.Constants.PASS_PITOWNER;
@@ -98,6 +99,7 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
         holder.bench_no.setText(passArrayList.get(position).getBench_no());
         holder.truck_no.setText(passArrayList.get(position).getTruck_no());
         holder.pass_contractorname.setText(passArrayList.get(position).getContractor_name());
+        holder.pass_createdusername.setText(passArrayList.get(position).getEx_user_name());
 
         //handle buttons
         holder.edit.setOnClickListener(view -> {
@@ -111,6 +113,7 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
             intent.putExtra(PASS_TRUCKNO, passList.getTruck_no());
             intent.putExtra(USER_ID, passList.getUser_id());
             intent.putExtra(APPROVER_NAME, passList.getApprover_name());
+            intent.putExtra(PASS_CREATED_BY, passList.getEx_user_name());
             if (passList.getMine_no().equals("Mine Number 1")) {
                 intent.putExtra(PASS_MINENO, 1);
             } else if (passList.getMine_no().equals("Mine Number 2")) {
@@ -138,7 +141,7 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no, pass_contractorname;
+        MaterialTextView serial_no, date, mine_no, pit_owner, section_no, bench_no, truck_no, pass_contractorname, pass_createdusername;
         LinearLayout action_layout;
         ConstraintLayout signature_layout;
         ImageView signature;
@@ -165,6 +168,7 @@ public class ApprovePassAdapter extends RecyclerView.Adapter<ApprovePassAdapter.
             edit = itemView.findViewById(R.id.edi_pass);
             pass_contractorname = itemView.findViewById(R.id.pass_contractorname);
             progressBar = itemView.findViewById(R.id.progress);
+            pass_createdusername = itemView.findViewById(R.id.pass_createdusername);
         }
     }
 

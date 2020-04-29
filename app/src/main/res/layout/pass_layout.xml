@@ -95,6 +95,32 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/pass_heading0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/pass_issued_by"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/contractor_heading" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/pass_createdusername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:enabled="false"
+                android:text="45454"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@+id/pass_heading0"
+                app:layout_constraintTop_toBottomOf="@id/pass_contractorname" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/pass_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,7 +130,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/contractor_heading" />
+                app:layout_constraintTop_toBottomOf="@+id/pass_heading0" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/pass_contractorname"
@@ -120,6 +146,7 @@
                 app:layout_constraintStart_toEndOf="@+id/contractor_heading"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/pass_serialno"
                 android:layout_width="wrap_content"
@@ -132,7 +159,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@+id/pass_heading"
-                app:layout_constraintTop_toBottomOf="@+id/pass_contractorname" />
+                app:layout_constraintTop_toBottomOf="@+id/pass_createdusername" />
 
 
             <com.google.android.material.textview.MaterialTextView
