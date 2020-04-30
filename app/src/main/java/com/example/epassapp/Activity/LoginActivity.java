@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("contractorname", contractorname);
                 intent.putExtra("trucknumber", trucknumber);
                 intent.putExtra("userpost", userpost);
+                intent.putExtra("fromMainActivity",true);
                 startActivity(intent);
             }
         });

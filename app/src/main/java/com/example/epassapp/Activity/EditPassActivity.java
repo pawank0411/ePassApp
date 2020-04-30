@@ -115,9 +115,8 @@ public class EditPassActivity extends AppCompatActivity {
 
                 final CollectionReference epassReference = FirebaseFirestore.getInstance().collection(E_PASSES);
                 epassReference.document(pass_id).get().addOnCompleteListener(task -> {
-                    if (!signature_exists) {
+                    if (!signature_exists && !askSignature.isSuccessfullySaved) {
                         askSignature.GetSignature(user_name);
-                        signature_exists = true;
                     } else {
                         progressDialog = new ProgressDialog(EditPassActivity.this);
                         progressDialog.setTitle("Please wait");

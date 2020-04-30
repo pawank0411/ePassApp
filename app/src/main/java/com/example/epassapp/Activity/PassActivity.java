@@ -1,10 +1,12 @@
 package com.example.epassapp.Activity;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,6 +56,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
     private boolean fromWayBridge, fromHistory, fromSiteInCharge;
     private DrawerLayout drawerLayout;
+    private String user_phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +125,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                                         passInfo.clear();
                                         passOriginalArrayList.clear();
                                         progressBar.setVisibility(View.GONE);
-
+                                        user_phone = user.getUser_phone();
                                         if (queryDocumentSnapshots != null) {
                                             if (!fromHistory) {
                                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
@@ -179,8 +182,9 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                                     .whereEqualTo(PASS_TRUCKNO, user.getTruck_number())
                                     .addSnapshotListener((queryDocumentSnapshots, e) -> {
                                 passInfo.clear();
-                                        passOriginalArrayList.clear();
+                                passOriginalArrayList.clear();
                                 progressBar.setVisibility(View.GONE);
+                                user_phone = user.getUser_phone();
 
                                 if (queryDocumentSnapshots != null) {
                                     if (!fromHistory) {
@@ -253,6 +257,20 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                 intent.putExtra("fromHistory", true);
                 startActivity(intent);
                 break;
+            }
+            case R.id.delete: {
+                new AlertDialog.Builder(this)
+                        .setTitle(Html.fromHtml("<font color=\"#CA0B0B\">Delete Account</font>"))
+                        .setMessage("Are you sure you want to delete this account?")
+                        .setCancelable(false)
+                        .setPositiveButton("YES", (dialog, which) -> {
+                            Intent intent = new Intent(PassActivity.this, VerifyOTP.class);
+                            intent.putExtra("deleteUser", true);
+                            intent.putExtra("user_phone", user_phone);
+                            startActivity(intent);
+                        }).setNegativeButton("NO", (dialog, which) -> {
+                    dialog.dismiss();
+                }).show();
             }
         }
         return false;

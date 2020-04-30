@@ -381,8 +381,7 @@
                 android:visibility="gone"
                 android:weightSum="3"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pass_heading7"
-                tools:layout_editor_absoluteX="10dp">
+                app:layout_constraintTop_toBottomOf="@id/pass_heading7">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/edi_pass"
@@ -393,7 +392,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/gradient"
                     android:gravity="center"
-                    android:padding="13dp"
                     android:text="@string/edit"
                     android:textAllCaps="true"
                     android:textColor="@android:color/black"
@@ -409,7 +407,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/gradient"
                     android:gravity="center"
-                    android:padding="13dp"
                     android:text="@string/reject"
                     android:textAllCaps="true"
                     android:textColor="@android:color/black"
@@ -425,7 +422,6 @@
                     android:layout_weight="1"
                     android:background="@drawable/gradient"
                     android:gravity="center"
-                    android:padding="13dp"
                     android:text="@string/accept"
                     android:textAllCaps="true"
                     android:textColor="@android:color/black"

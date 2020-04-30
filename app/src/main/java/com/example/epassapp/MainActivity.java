@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         } else {
             assignposts();
-            swipeRefreshLayout.setOnRefreshListener(this::assignposts);
+            swipeRefreshLayout.setOnRefreshListener(this::recreate);
         }
     }
 
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null && bundle.getBoolean("fromLoginActivity"))
                 intent.putExtra("fromMainActivity", true);
+            intent.putExtra("fromMain",true);
             startActivity(intent);
         }
     }

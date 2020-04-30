@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,7 +66,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
     private ProgressBar progressBar;
     private ArrayList<Pass> passArrayList = new ArrayList<>();
     public static boolean isSearchBarOpen = false;
-    private String user_name;
+    private String user_name, user_phone;
     private static final int EXTERNAL_STORAGE_PERMISSION_CODE = 1002;
     private boolean signature_exists;
     private AskSignature askSignature;
@@ -118,6 +119,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                 if (user != null && user.getIsVerified().equals(PASS_ACCEPTED)) {
                     user_name = user.getUser_name();
+                    user_phone = user.getUser_phone();
                     firestore.collection(E_PASSES).addSnapshotListener((queryDocumentSnapshots, e) -> {
                         passArrayList.clear();
                         passOriginalArrayList.clear();
@@ -182,9 +184,8 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
 
     @Override
     public void onRejectClicked(String pass_date, String pass_id) {
-        if (!signature_exists) {
+        if (!signature_exists && !askSignature.isSuccessfullySaved) {
             askSignature.GetSignature(user_name);
-            signature_exists = true;
         } else {
             DocumentReference documentReference = FirebaseFirestore.getInstance().collection(E_PASSES).document(pass_id);
             documentReference.update(PASS_APPROVED, PASS_REJECTED).addOnCompleteListener(task -> {
@@ -198,9 +199,8 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
 
     @Override
     public void onAcceptClicked(String pass_date, final String pass_id) {
-        if (!signature_exists) {
+        if (!signature_exists && !askSignature.isSuccessfullySaved) {
             askSignature.GetSignature(user_name);
-            signature_exists = true;
         } else {
             DocumentReference documentReference = FirebaseFirestore.getInstance().collection(E_PASSES).document(pass_id);
             documentReference.update(PASS_APPROVED, PASS_ACCEPTED).addOnCompleteListener(task -> {
@@ -271,7 +271,6 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
 
 
                 } else {
-
                     new AlertDialog.Builder(this)
                             .setTitle("Permission needed")
                             .setMessage("Please allow to access storage")
@@ -324,11 +323,31 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 startActivity(intent);
                 break;
             }
-            case R.id.history:
+            case R.id.history: {
                 Intent intent = new Intent(ApprovePassActivity.this, ApprovePassActivity.class);
                 intent.putExtra("fromHistory", true);
                 startActivity(intent);
                 break;
+            }
+//            case R.id.approve : {
+//                Intent intent = new Intent(ApprovePassActivity.this, ApproveAccount.class);
+//                startActivity(intent);
+//                break;
+//            }
+            case R.id.delete: {
+                new AlertDialog.Builder(this)
+                        .setTitle(Html.fromHtml("<font color=\"#CA0B0B\">Delete Account</font>"))
+                        .setMessage("Are you sure you want to delete this account?")
+                        .setCancelable(false)
+                        .setPositiveButton("YES", (dialog, which) -> {
+                            Intent intent = new Intent(ApprovePassActivity.this, VerifyOTP.class);
+                            intent.putExtra("deleteUser", true);
+                            intent.putExtra("user_phone", user_phone);
+                            startActivity(intent);
+                        }).setNegativeButton("NO", (dialog, which) -> {
+                    dialog.dismiss();
+                }).show();
+            }
         }
         return false;
     }

@@ -6,10 +6,16 @@
     <item
         android:id="@+id/active_pass"
         android:title="@string/active_passes" />
+<!--    <item-->
+<!--        android:id="@+id/approve"-->
+<!--        android:title="@string/approve_account" />-->
     <item
         android:id="@+id/history"
         android:title="@string/history" />
     <item
         android:id="@+id/logout"
         android:title="@string/logout" />
+    <item
+        android:id="@+id/delete"
+        android:title="@string/delete_account" />
 </menu>

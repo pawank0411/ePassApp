@@ -42,5 +42,6 @@
         <activity
             android:name=".Activity.VerifyOTP"
             android:configChanges="screenSize|orientation" />
+        <activity android:name=".Activity.ApproveAccount" />
     </application>
 </manifest>

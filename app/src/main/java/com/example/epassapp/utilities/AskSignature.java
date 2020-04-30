@@ -35,6 +35,8 @@ public class AskSignature {
     private static MaterialButton mGetSign;
     private static Bitmap bitmap;
     private LinearLayout linearLayout;
+    public boolean isSuccessfullySaved;
+
     public AskSignature(Context context) {
         this.context = context;
     }
@@ -117,7 +119,7 @@ public class AskSignature {
                 mFileOutStream.close();
                 if (storedPath != null) {
                     final ProgressDialog progressDialog = new ProgressDialog(context);
-                    progressDialog.setTitle("Uploading");
+                    progressDialog.setTitle("Saving your signature");
                     progressDialog.setMessage("Please wait..");
                     progressDialog.show();
 
@@ -126,7 +128,8 @@ public class AskSignature {
                     signsRef.putFile(Uri.fromFile(new File(storedPath)))
                             .addOnSuccessListener(taskSnapshot -> {
                                 progressDialog.dismiss();
-                                Toast.makeText(context, "File Saved", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Now you're ready to accept passes!", Toast.LENGTH_LONG).show();
+                                isSuccessfullySaved = true;
                             })
                             .addOnFailureListener(exception -> {
                                 progressDialog.dismiss();

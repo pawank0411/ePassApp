@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ePassApp</string>
-    <string name="wait_for_the_naccount_to_be_verified">WAIT FOR THE \nACCOUNT TO BE VERIFIED</string>
+    <string name="wait_for_the_naccount_to_be_verified">WAIT FOR THE \nACCOUNT TO BE VERIFIED \n\n (Pull down to refresh)</string>
     <string name="generate_pass">GENERATE PASS</string>
     <string name="phone_number">Phone number</string>
     <string name="generate">GENERATE</string>
@@ -55,6 +55,10 @@
     <string name="unit_birla_white">(Unit : Birla White)</string>
     <string name="send_code_again">Send code again</string>
     <string name="pass_issued_by">Pass Issued By :</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="approve_account">Approve account</string>
+    <string name="user_name">User Name : </string>
+    <string name="post1">Post : </string>
     <string-array name="post">
         <item>Select an option</item>
         <item>Contractor</item>

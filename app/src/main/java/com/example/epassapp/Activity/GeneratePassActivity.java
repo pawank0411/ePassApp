@@ -1,9 +1,11 @@
 package com.example.epassapp.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -47,7 +49,7 @@ import static com.example.epassapp.utilities.Constants.time;
 public class GeneratePassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private TextInputEditText pit_owner, section_no, bench_no, pass_date, serial_no, truck_no;
     private Spinner spinner, spinner_con;
-    private String serial_number, user_name;
+    private String serial_number, user_name, user_phone;
     private MaterialTextView pass_count, account_verify;
     private ProgressDialog progressDialog;
     private ProgressBar progressBar;
@@ -56,26 +58,6 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
     private FirebaseFirestore firestore;
     private boolean fromSiteInCharge;
     private DrawerLayout drawerLayout;
-
-    public static String convertToTitleCaseIteratingChars(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-        StringBuilder converted = new StringBuilder();
-        boolean convertNext = true;
-        for (char ch : text.toCharArray()) {
-            if (Character.isSpaceChar(ch)) {
-                convertNext = true;
-            } else if (convertNext) {
-                ch = Character.toTitleCase(ch);
-                convertNext = false;
-            } else {
-                ch = Character.toLowerCase(ch);
-            }
-            converted.append(ch);
-        }
-        return converted.toString();
-    }
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -134,6 +116,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                 User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                 if (user != null) {
                     if (user.getIsVerified().equals(PASS_ACCEPTED)) {
+                        user_phone = user.getUser_phone();
                         user_name = user.getUser_name();
                         progressBar.setVisibility(View.GONE);
                         form_layout.setVisibility(View.VISIBLE);
@@ -159,12 +142,13 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                                     epass.setBench_no(Objects.requireNonNull(bench_no.getText()).toString().trim());
                                     epass.setTruck_no(Objects.requireNonNull(truck_no.getText()).toString().trim());
                                     epass.setUser_id(pass_ref_id + "#" + date);
-                                    epass.setEx_user_name(user.getEx_user_name());
                                     if (!fromSiteInCharge) {
                                         epass.setContractor_name(user.getUser_name());
+                                        epass.setEx_user_name(user.getEx_user_name());
                                     } else {
                                         if (!spinner_con.getSelectedItem().toString().equals("Select an option")) {
                                             epass.setContractor_name(spinner_con.getSelectedItem().toString().trim());
+                                            epass.setEx_user_name(user.getUser_name());
                                         } else {
                                             progressDialog.dismiss();
                                             Toast.makeText(this, "Please fill all the details!", Toast.LENGTH_SHORT).show();
@@ -261,9 +245,44 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                 startActivity(intent);
                 break;
             }
+            case R.id.delete: {
+                new AlertDialog.Builder(this)
+                        .setTitle(Html.fromHtml("<font color=\"#CA0B0B\">Delete Account</font>"))
+                        .setMessage("Are you sure you want to delete this account?")
+                        .setCancelable(false)
+                        .setPositiveButton("YES", (dialog, which) -> {
+                            Intent intent = new Intent(GeneratePassActivity.this, VerifyOTP.class);
+                            intent.putExtra("deleteUser", true);
+                            intent.putExtra("user_phone", user_phone);
+                            startActivity(intent);
+                        }).setNegativeButton("NO", (dialog, which) -> {
+                    dialog.dismiss();
+                }).show();
+            }
         }
         return false;
     }
+
+    public static String convertToTitleCaseIteratingChars(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        StringBuilder converted = new StringBuilder();
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+        return converted.toString();
+    }
+
 
     @Override
     public void onBackPressed() {

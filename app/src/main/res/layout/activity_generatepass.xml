@@ -49,10 +49,8 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-
             app:layout_constraintVertical_bias="0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -60,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
@@ -132,31 +131,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <!--        <com.google.android.material.textfield.TextInputLayout-->
-                <!--            android:id="@+id/mine_layout"-->
-                <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-                <!--            android:layout_width="match_parent"-->
-                <!--            android:layout_height="wrap_content"-->
-                <!--            android:layout_margin="10dp"-->
-                <!--            android:hint="@string/mine_number"-->
-                <!--            android:textColorHint="#000000"-->
-                <!--            app:boxStrokeColor="#000000"-->
-                <!--            app:hintEnabled="true"-->
-                <!--            app:hintTextColor="#000000"-->
-                <!--            app:layout_constraintTop_toBottomOf="@+id/serial_layout">-->
-
-                <!--            <com.google.android.material.textfield.TextInputEditText-->
-                <!--                android:id="@+id/mines_no"-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:enabled="false"-->
-                <!--                android:focusable="false"-->
-                <!--                android:inputType="text"-->
-                <!--                android:singleLine="true"-->
-                <!--                android:textColor="#000000" />-->
-
-                <!--        </com.google.android.material.textfield.TextInputLayout>-->
                 <LinearLayout
                     android:id="@+id/mine_layout"
                     android:layout_width="match_parent"
@@ -321,6 +295,9 @@
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/generate_pass" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
