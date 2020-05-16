@@ -30,6 +30,7 @@ import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
 import com.example.epassapp.adapter.PassAdapter;
 import com.example.epassapp.utilities.Constants;
+import com.example.epassapp.utilities.Cryptography;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -125,7 +126,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                                         passInfo.clear();
                                         passOriginalArrayList.clear();
                                         progressBar.setVisibility(View.GONE);
-                                        user_phone = user.getUser_phone();
+                                        user_phone = Cryptography.decrypt(user.getUser_phone());
                                         if (queryDocumentSnapshots != null) {
                                             if (!fromHistory) {
                                                 for (DocumentSnapshot snapshot : queryDocumentSnapshots.getDocuments()) {
@@ -184,7 +185,7 @@ public class PassActivity extends AppCompatActivity implements NavigationView.On
                                 passInfo.clear();
                                 passOriginalArrayList.clear();
                                 progressBar.setVisibility(View.GONE);
-                                user_phone = user.getUser_phone();
+                                user_phone = Cryptography.decrypt(user.getUser_phone());
 
                                 if (queryDocumentSnapshots != null) {
                                     if (!fromHistory) {

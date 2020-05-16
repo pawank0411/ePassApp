@@ -39,6 +39,7 @@ import com.example.epassapp.R;
 import com.example.epassapp.adapter.ApprovePassAdapter;
 import com.example.epassapp.utilities.AskSignature;
 import com.example.epassapp.utilities.Constants;
+import com.example.epassapp.utilities.Cryptography;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -119,7 +120,7 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                 if (user != null && user.getIsVerified().equals(PASS_ACCEPTED)) {
                     user_name = user.getUser_name();
-                    user_phone = user.getUser_phone();
+                    user_phone = Cryptography.decrypt(user.getUser_phone());
                     firestore.collection(E_PASSES).addSnapshotListener((queryDocumentSnapshots, e) -> {
                         passArrayList.clear();
                         passOriginalArrayList.clear();

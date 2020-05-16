@@ -26,6 +26,7 @@ import com.example.epassapp.MainActivity;
 import com.example.epassapp.Model.Pass;
 import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
+import com.example.epassapp.utilities.Cryptography;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -116,7 +117,7 @@ public class GeneratePassActivity extends AppCompatActivity implements Navigatio
                 User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                 if (user != null) {
                     if (user.getIsVerified().equals(PASS_ACCEPTED)) {
-                        user_phone = user.getUser_phone();
+                        user_phone = Cryptography.decrypt(user.getUser_phone());
                         user_name = user.getUser_name();
                         progressBar.setVisibility(View.GONE);
                         form_layout.setVisibility(View.VISIBLE);

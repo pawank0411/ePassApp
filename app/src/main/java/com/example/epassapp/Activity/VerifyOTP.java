@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.epassapp.MainActivity;
 import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
+import com.example.epassapp.utilities.Cryptography;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.FirebaseException;
@@ -232,7 +233,7 @@ public class VerifyOTP extends AppCompatActivity {
                         user.setUser_name(contractorname);
                         user.setEx_user_name(convertToTitleCaseIteratingChars(username));
                     }
-                    user.setUser_phone(phoneNumber);
+                    user.setUser_phone(Cryptography.encrypt(phoneNumber));
                     user.setUser_post(userpost);
                     if (userpost.equals(POST_TRUCKDRIVER)) {
                         user.setTruck_number(trucknumber);
