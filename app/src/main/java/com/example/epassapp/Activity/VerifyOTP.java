@@ -181,26 +181,20 @@ public class VerifyOTP extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Objects.requireNonNull(user).reauthenticate(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                user.delete()
-                        .addOnCompleteListener(task12 -> {
-                            if (task12.isSuccessful()) {
-                                FirebaseFirestore.getInstance().collection(USER_ACCOUNTS)
-                                        .document(user.getUid())
-                                        .delete()
-                                        .addOnCompleteListener(task1 -> {
-                                            if (task1.isSuccessful()) {
-                                                progressDialog.dismiss();
-                                                Toast.makeText(VerifyOTP.this, "Account Deleted Successfully!", Toast.LENGTH_SHORT).show();
-                                                Intent intent = new Intent(VerifyOTP.this, MainActivity.class);
-                                                startActivity(intent);
-                                            }
-                                        }).addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Something went wrong.Please try again!", Toast.LENGTH_SHORT).show();
+                FirebaseFirestore.getInstance().collection(USER_ACCOUNTS)
+                        .document(user.getUid())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> user.delete()
+                                .addOnCompleteListener(task12 -> {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(VerifyOTP.this, "Account Deleted Successfully!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(VerifyOTP.this, MainActivity.class);
                                     startActivity(intent);
-                                });
-                            }
-                        }).addOnFailureListener(e -> {
+                                }).addOnFailureListener(e -> {
+                                    Toast.makeText(VerifyOTP.this, "Something went wrong.Please try again!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(VerifyOTP.this, MainActivity.class);
+                                    startActivity(intent);
+                                })).addOnFailureListener(e -> {
                     Toast.makeText(this, "Something went wrong.Please try again!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(VerifyOTP.this, MainActivity.class);
                     startActivity(intent);
