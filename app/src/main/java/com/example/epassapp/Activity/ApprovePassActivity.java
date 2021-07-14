@@ -65,14 +65,14 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
     private ApprovePassAdapter passAdapter;
     private MaterialTextView account_verify;
     private ProgressBar progressBar;
-    private ArrayList<Pass> passArrayList = new ArrayList<>();
+    private final ArrayList<Pass> passArrayList = new ArrayList<>();
     public static boolean isSearchBarOpen = false;
     private String user_name, user_phone;
     private static final int EXTERNAL_STORAGE_PERMISSION_CODE = 1002;
     private boolean signature_exists;
     private AskSignature askSignature;
     private boolean fromHistory;
-    private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
+    private final ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
     private DrawerLayout drawerLayout;
 
     @Override
@@ -330,11 +330,11 @@ public class ApprovePassActivity extends AppCompatActivity implements ApprovePas
                 startActivity(intent);
                 break;
             }
-//            case R.id.approve : {
-//                Intent intent = new Intent(ApprovePassActivity.this, ApproveAccount.class);
-//                startActivity(intent);
-//                break;
-//            }
+            case R.id.approve: {
+                Intent intent = new Intent(ApprovePassActivity.this, ApproveAccount.class);
+                startActivity(intent);
+                break;
+            }
             case R.id.delete: {
                 new AlertDialog.Builder(this)
                         .setTitle(Html.fromHtml("<font color=\"#CA0B0B\">Delete Account</font>"))

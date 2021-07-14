@@ -2,6 +2,7 @@ package com.example.epassapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void assignposts() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Log.d("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
             FirebaseFirestore.getInstance().collection(USER_ACCOUNTS).document(FirebaseAuth.getInstance().getCurrentUser().getUid()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -104,9 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                 account_verify.setVisibility(View.VISIBLE);
                             }
                         }
-                    }).addOnFailureListener(e -> {
-                Toast.makeText(MainActivity.this, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show();
-            });
+                    }).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show());
         } else {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             Bundle bundle = getIntent().getExtras();

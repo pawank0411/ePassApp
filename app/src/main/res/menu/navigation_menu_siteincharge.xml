@@ -6,9 +6,9 @@
     <item
         android:id="@+id/active_pass"
         android:title="@string/active_passes" />
-<!--    <item-->
-<!--        android:id="@+id/approve"-->
-<!--        android:title="@string/approve_account" />-->
+    <item
+        android:id="@+id/approve"
+        android:title="@string/approve_account" />
     <item
         android:id="@+id/history"
         android:title="@string/history" />

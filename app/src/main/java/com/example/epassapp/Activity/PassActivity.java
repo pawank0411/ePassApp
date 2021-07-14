@@ -48,13 +48,13 @@ import static com.example.epassapp.utilities.Constants.PASS_TRUCKNO;
 import static com.example.epassapp.utilities.Constants.USER_ACCOUNTS;
 
 public class PassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private ArrayList<Pass> passInfo = new ArrayList<>();
+    private final ArrayList<Pass> passInfo = new ArrayList<>();
     public static boolean isSearchBarOpen = false;
     private RecyclerView recyclerView;
     private PassAdapter passAdapter;
     private MaterialTextView account_verify;
     private ProgressBar progressBar;
-    private ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
+    private final ArrayList<Pass> passOriginalArrayList = new ArrayList<>();
     private boolean fromWayBridge, fromHistory, fromSiteInCharge;
     private DrawerLayout drawerLayout;
     private String user_phone;

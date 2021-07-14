@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.epassapp.Model.User;
 import com.example.epassapp.R;
+import com.example.epassapp.utilities.Cryptography;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
 public class ApproveAccountAdapter extends RecyclerView.Adapter<ApproveAccountAdapter.ViewHolder> {
-    private OnItemClickListener onItemClickListener;
-    private ArrayList<User> accountArrayList;
+    private final OnItemClickListener onItemClickListener;
+    private final ArrayList<User> accountArrayList;
 
     public ApproveAccountAdapter(ArrayList<User> accountArrayList, OnItemClickListener onItemClickListener) {
         this.accountArrayList = accountArrayList;
@@ -45,7 +46,7 @@ public class ApproveAccountAdapter extends RecyclerView.Adapter<ApproveAccountAd
         holder.username.setText(accountArrayList.get(position).getUser_name());
         holder.post.setText(accountArrayList.get(position).getUser_post());
         holder.truck_number.setText(accountArrayList.get(position).getTruck_number());
-        holder.phone.setText(accountArrayList.get(position).getUser_phone());
+        holder.phone.setText(Cryptography.decrypt(accountArrayList.get(position).getUser_phone()));
         holder.contractor_name.setText(accountArrayList.get(position).getEx_user_name());
     }
 
